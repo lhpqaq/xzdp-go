@@ -15,7 +15,7 @@ const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 const digitBytes = "0123456789"
 
 func RandInit() {
-	rand.Seed(time.Now().UnixNano())
+	rand.New(rand.NewSource(time.Now().UnixNano())) // fix the deprecated method rand.Seed(time.Now().UnixNano())
 }
 
 func GenerateDigits(length int) string {

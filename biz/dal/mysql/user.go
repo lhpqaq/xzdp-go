@@ -2,6 +2,7 @@ package mysql
 
 import (
 	"context"
+	"errors"
 	model "xzdp/biz/model/user"
 	"xzdp/biz/utils"
 
@@ -15,7 +16,7 @@ func GetById(ctx context.Context, id int64) (*model.User, error) {
 
 	// Perform the query
 	if err := db.First(&user, "id = ?", id).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			// Handle case where no user is found
 			return nil, utils.ErrNotFound
 		}

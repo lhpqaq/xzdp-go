@@ -3,6 +3,7 @@ package mysql
 import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	model "xzdp/biz/model/user"
 	"xzdp/conf"
 )
 
@@ -21,4 +22,11 @@ func Init() {
 	if err != nil {
 		panic(err)
 	}
+	autoMigrateTable()
+}
+
+func autoMigrateTable() {
+	DB.AutoMigrate(
+		&model.User{},
+	)
 }

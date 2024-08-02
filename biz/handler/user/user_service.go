@@ -42,7 +42,6 @@ func UserLogin(ctx context.Context, c *app.RequestContext) {
 		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
 		return
 	}
-
 	resp, err := service.NewUserLoginService(ctx, c).Run(&req)
 	if err != nil {
 		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
@@ -56,17 +55,13 @@ func UserLogin(ctx context.Context, c *app.RequestContext) {
 // @router /user/:id [GET]
 func UserInfo(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req model.UserLoginFrom
-	err = c.BindAndValidate(&req)
 	id := c.Param("id")
 	fmt.Println(id)
 	if err != nil {
 		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
 		return
 	}
-
-	resp, err := service.NewUserInfoService(ctx, c).Run(&req)
-
+	resp, err := service.NewUserInfoService(ctx, c).Run(id)
 	if err != nil {
 		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
 		return

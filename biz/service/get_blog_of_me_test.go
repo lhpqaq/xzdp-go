@@ -4,16 +4,15 @@ import (
 	"context"
 	"testing"
 
-	blog "xzdp/biz/model/blog"
-
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/test/assert"
+	blog "xzdp/biz/model/blog"
 )
 
-func TestGetHotBlogService_Run(t *testing.T) {
+func TestGetBlogOfMeService_Run(t *testing.T) {
 	ctx := context.Background()
 	c := app.NewContext(1)
-	s := NewGetHotBlogService(ctx, c)
+	s := NewGetBlogOfMeService(ctx, c)
 	// init req and assert value
 	req := &blog.BlogReq{}
 	resp, err := s.Run(req)

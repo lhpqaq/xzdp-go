@@ -20,3 +20,13 @@ func _gethotblogMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _ofMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _getblogofmeMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

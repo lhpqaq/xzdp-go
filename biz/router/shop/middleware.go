@@ -20,3 +20,18 @@ func _shoplistMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _shopMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _ofMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _shopoftypeMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

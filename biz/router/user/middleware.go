@@ -40,3 +40,8 @@ func _usermeMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _infoMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

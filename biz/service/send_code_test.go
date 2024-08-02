@@ -3,20 +3,32 @@ package service
 import (
 	"context"
 	"testing"
-	model "xzdp/biz/model/user"
+
+	"xzdp/biz/dal/redis"
+	user "xzdp/biz/model/user"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/test/assert"
 )
 
 func TestSendCodeService_Run(t *testing.T) {
+	// redis.Init()
+
 	ctx := context.Background()
 	c := app.NewContext(1)
 	s := NewSendCodeService(ctx, c)
 	// init req and assert value
-	req := &model.UserLoginFrom{}
+	req := &user.UserLoginFrom{
+		Phone: "12345678901"}
 	resp, err := s.Run(req)
-	assert.DeepEqual(t, nil, resp)
+
+	assert.DeepEqual(t, &user.Result{Success: true}, resp)
 	assert.DeepEqual(t, nil, err)
 	// todo edit your unit test.
+}
+
+func TestMain(m *testing.M) {
+	redis.Init()
+
+	m.Run()
 }

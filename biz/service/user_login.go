@@ -44,20 +44,21 @@ func (h *UserLoginService) Run(req *model.UserLoginFrom) (resp *model.Result, er
 	if redisCode != code {
 		return nil, fmt.Errorf("code not match")
 	}
-	// code verified then register user if not exist
+
+	token, err := utils.RandomUUID()
+	if err != nil {
+		return nil, err
+	}
 	var user model.User
-	result := mysql.DB.First(&user, "phone = ?", phone)
+	result := mysql.DB.Debug().First(&user, "phone = ?", phone)
+	hlog.CtxInfof(h.Context, "result = %+v", result)
 	if result.Error != nil {
-		err = h.createNewUserWithPhone(phone)
+		user, err = h.createNewUserWithPhone(phone)
 		if err != nil {
 			return nil, err
 		}
 	}
 	fmt.Println(user)
-	token, err := utils.RandomUUID()
-	if err != nil {
-		return nil, err
-	}
 	var userdto model.UserDTO
 	copier.Copy(&userdto, &user)
 	if err = redis.RedisClient.HMSet(h.Context, constants.LOGIN_USER_KEY+token, map[string]interface{}{
@@ -73,10 +74,11 @@ func (h *UserLoginService) Run(req *model.UserLoginFrom) (resp *model.Result, er
 	return &model.Result{Success: true, Data: &token}, nil
 }
 
-func (h *UserLoginService) createNewUserWithPhone(phone string) error {
+func (h *UserLoginService) createNewUserWithPhone(phone string) (model.User, error) {
 	user := model.User{
 		Phone: phone,
 	}
-	result := mysql.DB.Create(&user)
-	return result.Error
+	result := mysql.DB.Debug().Create(&user)
+	hlog.CtxInfof(h.Context, "result = %+v", result)
+	return user, result.Error
 }

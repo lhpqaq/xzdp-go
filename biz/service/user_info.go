@@ -2,15 +2,13 @@ package service
 
 import (
 	"context"
-	"errors"
-	"fmt"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"gorm.io/gorm"
-	"xzdp/biz/dal/mysql"
+	"strconv"
 
-	model "xzdp/biz/model/user"
+	"xzdp/biz/dal/mysql"
+	user "xzdp/biz/model/user"
 
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 
 type UserInfoService struct {
@@ -22,18 +20,38 @@ func NewUserInfoService(Context context.Context, RequestContext *app.RequestCont
 	return &UserInfoService{RequestContext: RequestContext, Context: Context}
 }
 
-func (h *UserInfoService) Run(id string) (resp *model.UserResp, err error) {
-	defer func() {
-		hlog.CtxInfof(h.Context, "req = %+v", id)
-		hlog.CtxInfof(h.Context, "resp = %+v", resp)
-	}()
+func (h *UserInfoService) Run(req *user.UserLoginFrom, c *app.RequestContext) (resp *user.UserInfo, err error) {
+	//defer func() {
+	// hlog.CtxInfof(h.Context, "req = %+v", req)
+	// hlog.CtxInfof(h.Context, "resp = %+v", resp)
+	//}()
 	// todo edit your code
-	var user model.User
-	if errors.Is(mysql.DB.First(&user, "id = ?", id).Error, gorm.ErrRecordNotFound) {
-		return nil, errors.New("user not found")
+	strId := c.Param("id")
+	id, err := strconv.ParseInt(strId, 10, 64)
+	if err != nil {
+		return nil, err
 	}
-	// 将用户信息返回
-	resp.RespBody = &user
-	fmt.Println(user)
-	return
+	userInfo, err := mysql.GetUserInfoById(h.Context, id)
+	if err == nil && userInfo != nil {
+		return userInfo, nil
+	}
+
+	err = h.createNewUserWithId(id)
+	if err != nil {
+		return nil, err
+	}
+	userInfo, err = mysql.GetUserInfoById(h.Context, id)
+	if err != nil {
+		return nil, err
+	}
+	return userInfo, nil
+}
+
+func (h *UserInfoService) createNewUserWithId(id int64) error {
+	user := user.UserInfo{
+		UserId: id,
+	}
+	result := mysql.DB.Create(&user)
+	hlog.CtxDebugf(h.Context, "result = %+v", result)
+	return result.Error
 }

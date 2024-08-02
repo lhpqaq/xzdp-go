@@ -2,11 +2,12 @@ package service
 
 import (
 	"context"
+	"testing"
+	model "xzdp/biz/model/user"
+
 	"github.com/cloudwego/hertz/pkg/common/test/assert"
 	"github.com/stretchr/testify/mock"
 	"gorm.io/gorm"
-	"testing"
-	model "xzdp/biz/model/user"
 )
 
 // 首先创建一个 Mock 对象来模拟数据库操作

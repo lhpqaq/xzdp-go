@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-	"fmt"
 
 	model "xzdp/biz/model/user"
 	"xzdp/biz/service"
@@ -52,28 +51,6 @@ func UserLogin(ctx context.Context, c *app.RequestContext) {
 	utils.SendRawResponse(ctx, c, consts.StatusOK, resp)
 }
 
-// UserInfo .
-// @router /user/:id [GET]
-func UserInfo(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req model.UserLoginFrom
-	err = c.BindAndValidate(&req)
-	id := c.Param("id")
-	fmt.Println(id)
-	if err != nil {
-		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
-		return
-	}
-
-	resp, err := service.NewUserInfoService(ctx, c).Run(&req)
-
-	if err != nil {
-		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
-		return
-	}
-	utils.SendSuccessResponse(ctx, c, consts.StatusOK, resp)
-}
-
 // UserMe .
 // @router /user/me [GET]
 func UserMe(ctx context.Context, c *app.RequestContext) {
@@ -84,8 +61,27 @@ func UserMe(ctx context.Context, c *app.RequestContext) {
 		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
 		return
 	}
-
 	resp, err := service.NewUserMeService(ctx, c).Run(&req)
+
+	if err != nil {
+		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		return
+	}
+	utils.SendSuccessResponse(ctx, c, consts.StatusOK, resp)
+}
+
+// UserInfo .
+// @router /user/info/:id [GET]
+func UserInfo(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req model.UserLoginFrom
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		return
+	}
+
+	resp, err := service.NewUserInfoService(ctx, c).Run(&req, c)
 
 	if err != nil {
 		utils.SendErrResponse(ctx, c, consts.StatusOK, err)

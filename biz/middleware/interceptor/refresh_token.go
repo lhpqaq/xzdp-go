@@ -18,11 +18,15 @@ func CheckToken(ctx context.Context, c *app.RequestContext) {
 	if token == nil {
 		c.Next(ctx)
 	}
+	hlog.CtxInfof(ctx, "token = %s", token)
 	if len(token) == 0 {
 		c.Next(ctx)
 	}
 	var userdto model.UserDTO
 	if err := redis.RedisClient.HGetAll(ctx, constants.LOGIN_USER_KEY+string(token)).Scan(&userdto); err != nil {
+		c.Next(ctx)
+	}
+	if userdto == (model.UserDTO{}) {
 		c.Next(ctx)
 	}
 	redis.RedisClient.Expire(ctx, constants.LOGIN_USER_KEY+string(token), time.Minute*1)

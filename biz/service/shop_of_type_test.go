@@ -4,18 +4,17 @@ import (
 	"context"
 	"testing"
 
-	blog "xzdp/biz/model/blog"
-
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/test/assert"
+	shop "xzdp/biz/model/shop"
 )
 
-func TestGetHotBlogService_Run(t *testing.T) {
+func TestShopOfTypeService_Run(t *testing.T) {
 	ctx := context.Background()
 	c := app.NewContext(1)
-	s := NewGetHotBlogService(ctx, c)
+	s := NewShopOfTypeService(ctx, c)
 	// init req and assert value
-	req := &blog.BlogReq{}
+	req := &shop.ShopOfTypeReq{}
 	resp, err := s.Run(req)
 	assert.DeepEqual(t, nil, resp)
 	assert.DeepEqual(t, nil, err)

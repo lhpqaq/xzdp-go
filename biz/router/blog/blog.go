@@ -20,5 +20,9 @@ func Register(r *server.Hertz) {
 	{
 		_blog := root.Group("/blog", _blogMw()...)
 		_blog.GET("/hot", append(_gethotblogMw(), blog.GetHotBlog)...)
+		{
+			_of := _blog.Group("/of", _ofMw()...)
+			_of.GET("/me", append(_getblogofmeMw(), blog.GetBlogOfMe)...)
+		}
 	}
 }

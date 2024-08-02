@@ -4,7 +4,7 @@
 
 ## 介绍
 
-因为[黑马程序员redis教程实战篇](https://www.bilibili.com/video/BV1cr4y1671t?p=24  )使用的语言是`java`，不想浪费这个项目所以想用golang重构一下。项目没有采用`gin`框架而是字节的[Hertz](https://www.cloudwego.io/zh/docs/hertz/)框架，目前已经完成了第一部分短信登录功能，**欢迎各位大佬一个合作完成这个项目！ **  
+因为[黑马程序员redis教程实战篇](https://www.bilibili.com/video/BV1cr4y1671t?p=24  )使用的语言是`java`，不想浪费这个项目所以想用golang重构一下。项目没有采用`gin`框架而是字节的[Hertz](https://www.cloudwego.io/zh/docs/hertz/)框架，目前已经完成了第一部分短信登录功能，**欢迎各位大佬一个合作完成这个项目**  
 
 ### 如何添加服务
 

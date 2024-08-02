@@ -3,10 +3,10 @@ package service
 import (
 	"context"
 	"testing"
+	model "xzdp/biz/model/user"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/test/assert"
-	xzdp "xzdp/biz/model/xzdp"
 )
 
 func TestUserLoginService_Run(t *testing.T) {
@@ -14,7 +14,7 @@ func TestUserLoginService_Run(t *testing.T) {
 	c := app.NewContext(1)
 	s := NewUserLoginService(ctx, c)
 	// init req and assert value
-	req := &xzdp.UserLoginFrom{}
+	req := &model.UserLoginFrom{}
 	resp, err := s.Run(req)
 	assert.DeepEqual(t, nil, resp)
 	assert.DeepEqual(t, nil, err)

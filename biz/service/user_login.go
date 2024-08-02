@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"xzdp/biz/dal/mysql"
@@ -33,8 +34,17 @@ func (h *UserLoginService) Run(req *model.UserLoginFrom) (resp *model.Result, er
 	phone := req.Phone
 	code := req.Code
 	if phone == "" || code == "" {
-		return nil, fmt.Errorf("phone or code can't be empty")
+		return nil, errors.New("phone or code can't be empty")
 	}
+	redisCode, err := redis.RedisClient.Get(h.Context, constants.LOGIN_CODE_KEY+phone).Result()
+	if err != nil {
+		hlog.CtxErrorf(h.Context, "err = %s", err.Error())
+		return nil, err
+	}
+	if redisCode != code {
+		return nil, fmt.Errorf("code not match")
+	}
+	// code verified then register user if not exist
 	var user model.User
 	result := mysql.DB.First(&user, "phone = ?", phone)
 	if result.Error != nil {
@@ -44,15 +54,6 @@ func (h *UserLoginService) Run(req *model.UserLoginFrom) (resp *model.Result, er
 		}
 	}
 	fmt.Println(user)
-	redisCode, err := redis.RedisClient.Get(h.Context, constants.LOGIN_CODE_KEY+phone).Result()
-	if err != nil {
-		hlog.CtxErrorf(h.Context, "err = %s", err.Error())
-		return nil, err
-	}
-	if redisCode != code {
-		return nil, fmt.Errorf("code not match")
-	}
-
 	token, err := utils.RandomUUID()
 	if err != nil {
 		return nil, err

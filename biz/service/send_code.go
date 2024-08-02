@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
-	"fmt"
-
+	"errors"
+	"time"
 	"xzdp/biz/dal/redis"
 	user "xzdp/biz/model/user"
 	"xzdp/biz/pkg/constants"
@@ -30,10 +30,10 @@ func (h *SendCodeService) Run(req *user.UserLoginFrom) (resp *user.Result, err e
 	// todo edit your code
 	phone := req.Phone
 	if phone == "" {
-		return nil, fmt.Errorf("phone can't be empty")
+		return nil, errors.New("phone can't be empty")
 	}
 	code := utils.GenerateDigits(6)
-	err = redis.RedisClient.Set(h.Context, constants.LOGIN_CODE_KEY+phone, code, 0).Err()
+	err = redis.RedisClient.Set(h.Context, constants.LOGIN_CODE_KEY+phone, code, constants.LOGIN_CODE_EXPIRE*time.Second).Err() // add expiration
 	if err != nil {
 		hlog.CtxErrorf(h.Context, "err = %s", err.Error())
 		return nil, err

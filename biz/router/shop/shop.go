@@ -19,6 +19,7 @@ func Register(r *server.Hertz) {
 	root := r.Group("/", rootMw()...)
 	{
 		_shop := root.Group("/shop", _shopMw()...)
+		_shop.GET("/:id", append(_shopinfoMw(), shop.ShopInfo)...)
 		{
 			_of := _shop.Group("/of", _ofMw()...)
 			_of.GET("/type", append(_shopoftypeMw(), shop.ShopOfType)...)

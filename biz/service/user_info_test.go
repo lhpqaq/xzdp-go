@@ -5,6 +5,7 @@ import (
 	"testing"
 	model "xzdp/biz/model/user"
 
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/test/assert"
 	"github.com/stretchr/testify/mock"
 	"gorm.io/gorm"
@@ -28,6 +29,7 @@ func (mdb *MockDB) First(dest interface{}, conds ...interface{}) *gorm.DB {
 func TestUserInfoService_Run(t *testing.T) {
 	// 创建一个实例 of UserInfoService, MockDB 和 UserLoginFrom
 	h := NewUserInfoService(context.Background(), nil)
+
 	mdb := new(MockDB)
 	req := &model.UserLoginFrom{
 		Phone: "1234567890",
@@ -38,9 +40,9 @@ func TestUserInfoService_Run(t *testing.T) {
 
 	// 设置 MockDB 的预期行为和返回结果
 	mdb.On("First", mock.AnythingOfType("*model.User"), "phone", req.Phone).Return(expectedUser, mdb)
-
+	c := app.RequestContext{}
 	// 调用方法并断言预期结果
-	resp, err := h.Run(req)
+	resp, err := h.Run(req, &c)
 	assert.DeepEqual(t, model.UserResp{}, resp)
 	assert.DeepEqual(t, nil, err)
 

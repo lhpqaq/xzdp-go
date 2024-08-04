@@ -6,6 +6,24 @@
 
 因为[黑马程序员redis教程实战篇](https://www.bilibili.com/video/BV1cr4y1671t?p=24  )使用的语言是`java`，不想浪费这个项目所以想用golang重构一下。项目没有采用`gin`框架而是字节的[Hertz](https://www.cloudwego.io/zh/docs/hertz/)框架，目前已经完成了第一部分短信登录功能，**欢迎各位大佬一个合作完成这个项目**  
 
+**没时间完整做的同学可以在issue中挑选一个模块完成。**  
+
+### Start
+#### 前端
+前端代码在`resources/nginx-1.18.0.zip`中，Windows系统可以双击`nginx.exe`运行，Mac 或 Linux安装nginx后参考以下命令执行：
+```shell
+nginx -c ~/nginx-1.18.0/conf/nginx.conf -p ~/nginx-1.18.0
+```
+
+浏览器打开`http://127.0.0.1:8080`
+
+#### 后端 
+- 在mysql新建数据库表`xzdp`  
+- 将`resources/xzdp.sql`导入到表`xzdp`  
+- 启动`redis-server`    
+- 复制`conf/test/conf.example.yaml`为`conf/test/conf.yaml`并修改其中的配置  
+- `go run xzdp`
+
 ### 如何添加服务
 
 （To 不熟悉Hertz的同学）  

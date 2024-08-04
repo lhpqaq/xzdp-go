@@ -13,5 +13,5 @@ mysql:
   dsn: "root:password@tcp(127.0.0.1:3306)/gorm?charset=utf8&parseTime=True&loc=Local"
 
 redis:
-  address: "127.0.0.1:6399"
+  address: "127.0.0.1:6379"
   password: ""

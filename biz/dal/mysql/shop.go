@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"time"
 	"xzdp/biz/dal/redis"
 	"xzdp/biz/model/shop"
 	"xzdp/biz/pkg/constants"
@@ -57,6 +58,10 @@ func QueryShopType(ctx context.Context) ([]*shop.ShopType, error) {
 }
 
 func QueryByID(ctx context.Context, id int64) (*shop.Shop, error) {
+	return queryByID(ctx, id)
+}
+
+func queryByID1(ctx context.Context, id int64) (*shop.Shop, error) {
 	key := fmt.Sprintf("%s%d", constants.CACHE_SHOP_KEY, id)
 
 	// Query cache from Redis
@@ -90,5 +95,54 @@ func QueryByID(ctx context.Context, id int64) (*shop.Shop, error) {
 	}
 	redis.RedisClient.Set(ctx, key, shopJson, constants.CACHE_SHOP_TTL).Err()
 
+	return &shop, nil
+}
+
+func queryByID(ctx context.Context, id int64) (*shop.Shop, error) {
+	key := fmt.Sprintf("%s%d", constants.CACHE_SHOP_KEY, id)
+	lockKey := fmt.Sprintf("%s%d", constants.LOCK_SHOP_KEY, id)
+
+	// 1. 从 Redis 获取数据
+	result, err := redis.GetShopFromCache(ctx, key)
+	if err == nil {
+		return result, nil
+	}
+
+	// 2. 缓存未命中，尝试获取锁
+	isLocked := redis.TryLock(ctx, lockKey)
+	if !isLocked {
+		// 锁获取失败，等待后重试
+		time.Sleep(50 * time.Millisecond)
+		return queryByID(ctx, id)
+	}
+
+	// 2.2 获取锁成功，再次检查缓存
+	result, err = redis.GetShopFromCache(ctx, key)
+	if err == nil {
+		redis.UnLock(ctx, lockKey)
+		return result, nil
+	}
+
+	// 3. 从数据库查询数据
+	var shop shop.Shop
+	if err := DB.First(&shop, id).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			redis.RedisClient.Set(ctx, key, "", constants.CACHE_NULL_TTL).Err()
+			redis.UnLock(ctx, lockKey)
+			return nil, err
+		}
+		redis.UnLock(ctx, lockKey)
+		return nil, err
+	}
+
+	// 4. 数据库中存在，缓存数据
+	shopJson, err := json.Marshal(shop)
+	if err != nil {
+		redis.UnLock(ctx, lockKey)
+		return nil, err
+	}
+	redis.RedisClient.Set(ctx, key, string(shopJson), constants.CACHE_SHOP_TTL).Err()
+
+	redis.UnLock(ctx, lockKey)
 	return &shop, nil
 }

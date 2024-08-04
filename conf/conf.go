@@ -1,10 +1,12 @@
 package conf
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"runtime"
 	"sync"
 
 	"github.com/cloudwego/hertz/pkg/common/hlog"
@@ -54,7 +56,11 @@ func GetConf() *Config {
 }
 
 func initConf() {
-	prefix := "conf"
+	_, confpath, _, ok := runtime.Caller(0)
+	if !ok {
+		panic(errors.New("error"))
+	}
+	prefix := confpath[0 : len(confpath)-7]
 	confFileRelPath := filepath.Join(prefix, filepath.Join(GetEnv(), "conf.yaml"))
 	fmt.Println(confFileRelPath)
 	content, err := ioutil.ReadFile(confFileRelPath)

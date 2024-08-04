@@ -12,4 +12,5 @@ const (
 	CACHE_SHOP_KEY           = "cache:shop:"
 	CACHE_NULL_TTL           = time.Minute * 2
 	CACHE_SHOP_TTL           = time.Minute * 30
+	LOCK_SHOP_KEY            = "lock:shop:"
 )

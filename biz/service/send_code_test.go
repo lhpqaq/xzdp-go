@@ -4,7 +4,9 @@ import (
 	"context"
 	"testing"
 
+	"xzdp/biz/dal/mysql"
 	"xzdp/biz/dal/redis"
+
 	user "xzdp/biz/model/user"
 
 	"github.com/cloudwego/hertz/pkg/app"
@@ -29,6 +31,6 @@ func TestSendCodeService_Run(t *testing.T) {
 
 func TestMain(m *testing.M) {
 	redis.Init()
-
+	mysql.Init()
 	m.Run()
 }

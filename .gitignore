@@ -16,7 +16,6 @@ _testmain.go
 *.test
 *.prof
 *.rar
-*.zip
 *.gz
 *.psd
 *.bmd
@@ -34,4 +33,6 @@ _testmain.go
 /output
 *.local.yml
 dumped_hertz_remote_config.json
-		  
+conf/test/conf.yaml
+conf/dev/conf.yaml
+conf/online/conf.yaml

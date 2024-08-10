@@ -7,6 +7,7 @@ import (
 	model "xzdp/biz/model/user"
 	"xzdp/biz/pkg/constants"
 	"xzdp/biz/utils"
+	"xzdp/conf"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
@@ -14,6 +15,16 @@ import (
 
 func CheckToken(ctx context.Context, c *app.RequestContext) {
 	hlog.CtxInfof(ctx, "check token interceptor")
+	if conf.GetEnv() != "online" {
+		userdto := model.UserDTO{
+			ID:       2,
+			NickName: "法外狂徒张三",
+			Icon:     "https://img2.baidu.com/it/u=194756667,2850459164&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500",
+		}
+		ctx = utils.SaveUser(ctx, &userdto)
+		c.Next(ctx)
+		return
+	}
 	token := c.GetHeader("authorization")
 	if token == nil {
 		c.Next(ctx)
@@ -40,6 +51,10 @@ func CheckToken(ctx context.Context, c *app.RequestContext) {
 
 func LoginInterceptor(ctx context.Context, c *app.RequestContext) {
 	hlog.CtxInfof(ctx, "login interceptor")
+	if conf.GetEnv() != "online" {
+		c.Next(ctx)
+		return
+	}
 	if utils.GetUser(ctx) == nil {
 		c.SetStatusCode(401)
 		c.Abort()

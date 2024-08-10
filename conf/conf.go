@@ -3,7 +3,6 @@ package conf
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -63,7 +62,7 @@ func initConf() {
 	prefix := confpath[0 : len(confpath)-7]
 	confFileRelPath := filepath.Join(prefix, filepath.Join(GetEnv(), "conf.yaml"))
 	fmt.Println(confFileRelPath)
-	content, err := ioutil.ReadFile(confFileRelPath)
+	content, err := os.ReadFile(confFileRelPath) // replace the deprecated ioutil.ReadFile to os.ReadFile
 	if err != nil {
 		panic(err)
 	}

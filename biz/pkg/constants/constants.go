@@ -6,4 +6,5 @@ const (
 	LOGIN_CODE_KEY           = "login:code:"
 	LOGIN_USER_KEY           = "login:token:"
 	LOGIN_CODE_EXPIRE        = 300
+	FOLLOW_USER_KEY          = "follow:user:"
 )

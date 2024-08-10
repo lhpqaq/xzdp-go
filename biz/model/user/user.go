@@ -1674,7 +1674,7 @@ type UserService interface {
 
 	UserLogin(ctx context.Context, request *UserLoginFrom) (r *UserResp, err error)
 
-	UserInfo(ctx context.Context, request *UserLoginFrom) (r *UserResp, err error)
+	UserInfo(ctx context.Context, request string) (r *UserResp, err error)
 }
 
 type UserServiceClient struct {
@@ -1730,7 +1730,7 @@ func (p *UserServiceClient) UserLogin(ctx context.Context, request *UserLoginFro
 	}
 	return _result.GetSuccess(), nil
 }
-func (p *UserServiceClient) UserInfo(ctx context.Context, request *UserLoginFrom) (r *UserResp, err error) {
+func (p *UserServiceClient) UserInfo(ctx context.Context, request string) (r *UserResp, err error) {
 	var _args UserServiceUserInfoArgs
 	_args.Request = request
 	var _result UserServiceUserInfoResult
@@ -2859,7 +2859,7 @@ func (p *UserServiceUserLoginResult) String() string {
 }
 
 type UserServiceUserInfoArgs struct {
-	Request *UserLoginFrom `thrift:"request,1"`
+	Request string `thrift:"request,1"`
 }
 
 func NewUserServiceUserInfoArgs() *UserServiceUserInfoArgs {
@@ -2869,21 +2869,12 @@ func NewUserServiceUserInfoArgs() *UserServiceUserInfoArgs {
 func (p *UserServiceUserInfoArgs) InitDefault() {
 }
 
-var UserServiceUserInfoArgs_Request_DEFAULT *UserLoginFrom
-
-func (p *UserServiceUserInfoArgs) GetRequest() (v *UserLoginFrom) {
-	if !p.IsSetRequest() {
-		return UserServiceUserInfoArgs_Request_DEFAULT
-	}
+func (p *UserServiceUserInfoArgs) GetRequest() (v string) {
 	return p.Request
 }
 
 var fieldIDToName_UserServiceUserInfoArgs = map[int16]string{
 	1: "request",
-}
-
-func (p *UserServiceUserInfoArgs) IsSetRequest() bool {
-	return p.Request != nil
 }
 
 func (p *UserServiceUserInfoArgs) Read(iprot thrift.TProtocol) (err error) {
@@ -2906,7 +2897,7 @@ func (p *UserServiceUserInfoArgs) Read(iprot thrift.TProtocol) (err error) {
 
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.STRUCT {
+			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -2943,9 +2934,12 @@ ReadStructEndError:
 }
 
 func (p *UserServiceUserInfoArgs) ReadField1(iprot thrift.TProtocol) error {
-	_field := NewUserLoginFrom()
-	if err := _field.Read(iprot); err != nil {
+
+	var _field string
+	if v, err := iprot.ReadString(); err != nil {
 		return err
+	} else {
+		_field = v
 	}
 	p.Request = _field
 	return nil
@@ -2980,10 +2974,10 @@ WriteStructEndError:
 }
 
 func (p *UserServiceUserInfoArgs) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("request", thrift.STRUCT, 1); err != nil {
+	if err = oprot.WriteFieldBegin("request", thrift.STRING, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := p.Request.Write(oprot); err != nil {
+	if err := oprot.WriteString(p.Request); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {

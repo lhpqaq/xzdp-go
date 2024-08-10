@@ -19,10 +19,6 @@ struct FollowResp {
     1: Follow RespBody;
 }
 
-//struct isFollowedReq{
-//    1: i64 userId(api.query="userId");
-//}
-
 struct isFollowedResp{
     1: bool isFollowed;
 }

@@ -34,9 +34,7 @@ _testmain.go
 *.local.yml
 conf.yaml
 dumped_hertz_remote_config.json
-<<<<<<< HEAD
 conf/test/conf.yaml
 conf/dev/conf.yaml
 conf/online/conf.yaml
-=======
->>>>>>> dev
+.hz

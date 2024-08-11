@@ -289,7 +289,7 @@ func (p *Follow) String() string {
 
 type FollowReq struct {
 	IsFollow   bool  `thrift:"isFollow,1" json:"isFollow" query:"isFollow"`
-	TargetUser int64 `thrift:"targetUser,2" json:"targetUser" query:"targetUser"`
+	TargetUser int64 `thrift:"targetUser,2" json:"targetUser" query:"id"`
 }
 
 func NewFollowReq() *FollowReq {

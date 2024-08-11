@@ -32,15 +32,16 @@ struct FollowBlogReq {
     2: i64 offset (api.query="offset");
 }
 struct FollowBlogRresp {
-    1: list<Blog> blogs;
+    1: list<Blog> list;
     2: string minTime (api.query="minTime");
     3: i64 offset (api.query="offset");
 }
 service BlogSerivice {
     list<Blog> GetHotBlog(1: BlogReq request) (api.get="/blog/hot");
     list<Blog> GetUserBlog(1: BlogReq request) (api.get="/blog/user/:id");
+    list<Blog> BlogOfMe(1: BlogReq request) (api.get="/blog/of/me");
     // 发布博客
-    Blog PostBlog(1: Blog request) (api.post="/blog/post");
+    Blog PostBlog(1: Blog request) (api.post="/blog");
     // 查看博客
     Blog GetBlog(1: string request) (api.get="/blog/:id");
     // 删除博客

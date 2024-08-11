@@ -17,5 +17,8 @@ import (
 func Register(r *server.Hertz) {
 
 	root := r.Group("/", rootMw()...)
-	root.POST("/upload", append(_uploadMw(), image.Upload)...)
+	{
+		_upload := root.Group("/upload", _uploadMw()...)
+		_upload.POST("/blog", append(_upload0Mw(), image.Upload)...)
+	}
 }

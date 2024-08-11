@@ -25,6 +25,7 @@ type Config struct {
 	Hertz Hertz `yaml:"hertz"`
 	MySQL MySQL `yaml:"mysql"`
 	Redis Redis `yaml:"redis"`
+	Cors  Cors  `yaml:"cors"`
 }
 
 type MySQL struct {
@@ -46,6 +47,18 @@ type Hertz struct {
 	LogMaxSize      int    `yaml:"log_max_size"`
 	LogMaxBackups   int    `yaml:"log_max_backups"`
 	LogMaxAge       int    `yaml:"log_max_age"`
+}
+type CORSWhitelist struct {
+	AllowOrigin      string `yaml:"allow-origin"`
+	AllowMethods     string `yaml:"allow-methods"`
+	AllowHeaders     string `yaml:"allow-headers"`
+	ExposeHeaders    string `yaml:"expose-headers"`
+	AllowCredentials bool   `yaml:"allow-credentials"`
+}
+
+type Cors struct {
+	Mode      string          `yaml:"mode"`
+	WhiteList []CORSWhitelist `yaml:"white_list"`
 }
 
 // GetConf gets configuration instance

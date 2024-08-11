@@ -1251,7 +1251,7 @@ func (p *FollowBlogReq) String() string {
 }
 
 type FollowBlogRresp struct {
-	Blogs   []*Blog `thrift:"blogs,1" form:"blogs" json:"blogs" query:"blogs"`
+	List    []*Blog `thrift:"list,1" form:"list" json:"list" query:"list"`
 	MinTime string  `thrift:"minTime,2" json:"minTime" query:"minTime"`
 	Offset  int64   `thrift:"offset,3" json:"offset" query:"offset"`
 }
@@ -1263,8 +1263,8 @@ func NewFollowBlogRresp() *FollowBlogRresp {
 func (p *FollowBlogRresp) InitDefault() {
 }
 
-func (p *FollowBlogRresp) GetBlogs() (v []*Blog) {
-	return p.Blogs
+func (p *FollowBlogRresp) GetList() (v []*Blog) {
+	return p.List
 }
 
 func (p *FollowBlogRresp) GetMinTime() (v string) {
@@ -1276,7 +1276,7 @@ func (p *FollowBlogRresp) GetOffset() (v int64) {
 }
 
 var fieldIDToName_FollowBlogRresp = map[int16]string{
-	1: "blogs",
+	1: "list",
 	2: "minTime",
 	3: "offset",
 }
@@ -1373,7 +1373,7 @@ func (p *FollowBlogRresp) ReadField1(iprot thrift.TProtocol) error {
 	if err := iprot.ReadListEnd(); err != nil {
 		return err
 	}
-	p.Blogs = _field
+	p.List = _field
 	return nil
 }
 func (p *FollowBlogRresp) ReadField2(iprot thrift.TProtocol) error {
@@ -1436,13 +1436,13 @@ WriteStructEndError:
 }
 
 func (p *FollowBlogRresp) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("blogs", thrift.LIST, 1); err != nil {
+	if err = oprot.WriteFieldBegin("list", thrift.LIST, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteListBegin(thrift.STRUCT, len(p.Blogs)); err != nil {
+	if err := oprot.WriteListBegin(thrift.STRUCT, len(p.List)); err != nil {
 		return err
 	}
-	for _, v := range p.Blogs {
+	for _, v := range p.List {
 		if err := v.Write(oprot); err != nil {
 			return err
 		}
@@ -1506,6 +1506,8 @@ type BlogSerivice interface {
 	GetHotBlog(ctx context.Context, request *BlogReq) (r []*Blog, err error)
 
 	GetUserBlog(ctx context.Context, request *BlogReq) (r []*Blog, err error)
+
+	BlogOfMe(ctx context.Context, request *BlogReq) (r []*Blog, err error)
 	// 发布博客
 	PostBlog(ctx context.Context, request *Blog) (r *Blog, err error)
 	// 查看博客
@@ -1560,6 +1562,15 @@ func (p *BlogSeriviceClient) GetUserBlog(ctx context.Context, request *BlogReq) 
 	_args.Request = request
 	var _result BlogSeriviceGetUserBlogResult
 	if err = p.Client_().Call(ctx, "GetUserBlog", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+func (p *BlogSeriviceClient) BlogOfMe(ctx context.Context, request *BlogReq) (r []*Blog, err error) {
+	var _args BlogSeriviceBlogOfMeArgs
+	_args.Request = request
+	var _result BlogSeriviceBlogOfMeResult
+	if err = p.Client_().Call(ctx, "BlogOfMe", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
@@ -1641,6 +1652,7 @@ func NewBlogSeriviceProcessor(handler BlogSerivice) *BlogSeriviceProcessor {
 	self := &BlogSeriviceProcessor{handler: handler, processorMap: make(map[string]thrift.TProcessorFunction)}
 	self.AddToProcessorMap("GetHotBlog", &blogSeriviceProcessorGetHotBlog{handler: handler})
 	self.AddToProcessorMap("GetUserBlog", &blogSeriviceProcessorGetUserBlog{handler: handler})
+	self.AddToProcessorMap("BlogOfMe", &blogSeriviceProcessorBlogOfMe{handler: handler})
 	self.AddToProcessorMap("PostBlog", &blogSeriviceProcessorPostBlog{handler: handler})
 	self.AddToProcessorMap("GetBlog", &blogSeriviceProcessorGetBlog{handler: handler})
 	self.AddToProcessorMap("DeleteBlog", &blogSeriviceProcessorDeleteBlog{handler: handler})
@@ -1746,6 +1758,54 @@ func (p *blogSeriviceProcessorGetUserBlog) Process(ctx context.Context, seqId in
 		result.Success = retval
 	}
 	if err2 = oprot.WriteMessageBegin("GetUserBlog", thrift.REPLY, seqId); err2 != nil {
+		err = err2
+	}
+	if err2 = result.Write(oprot); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.Flush(ctx); err == nil && err2 != nil {
+		err = err2
+	}
+	if err != nil {
+		return
+	}
+	return true, err
+}
+
+type blogSeriviceProcessorBlogOfMe struct {
+	handler BlogSerivice
+}
+
+func (p *blogSeriviceProcessorBlogOfMe) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := BlogSeriviceBlogOfMeArgs{}
+	if err = args.Read(iprot); err != nil {
+		iprot.ReadMessageEnd()
+		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+		oprot.WriteMessageBegin("BlogOfMe", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return false, err
+	}
+
+	iprot.ReadMessageEnd()
+	var err2 error
+	result := BlogSeriviceBlogOfMeResult{}
+	var retval []*Blog
+	if retval, err2 = p.handler.BlogOfMe(ctx, args.Request); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing BlogOfMe: "+err2.Error())
+		oprot.WriteMessageBegin("BlogOfMe", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return true, err2
+	} else {
+		result.Success = retval
+	}
+	if err2 = oprot.WriteMessageBegin("BlogOfMe", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -2682,6 +2742,323 @@ func (p *BlogSeriviceGetUserBlogResult) String() string {
 		return "<nil>"
 	}
 	return fmt.Sprintf("BlogSeriviceGetUserBlogResult(%+v)", *p)
+
+}
+
+type BlogSeriviceBlogOfMeArgs struct {
+	Request *BlogReq `thrift:"request,1"`
+}
+
+func NewBlogSeriviceBlogOfMeArgs() *BlogSeriviceBlogOfMeArgs {
+	return &BlogSeriviceBlogOfMeArgs{}
+}
+
+func (p *BlogSeriviceBlogOfMeArgs) InitDefault() {
+}
+
+var BlogSeriviceBlogOfMeArgs_Request_DEFAULT *BlogReq
+
+func (p *BlogSeriviceBlogOfMeArgs) GetRequest() (v *BlogReq) {
+	if !p.IsSetRequest() {
+		return BlogSeriviceBlogOfMeArgs_Request_DEFAULT
+	}
+	return p.Request
+}
+
+var fieldIDToName_BlogSeriviceBlogOfMeArgs = map[int16]string{
+	1: "request",
+}
+
+func (p *BlogSeriviceBlogOfMeArgs) IsSetRequest() bool {
+	return p.Request != nil
+}
+
+func (p *BlogSeriviceBlogOfMeArgs) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_BlogSeriviceBlogOfMeArgs[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *BlogSeriviceBlogOfMeArgs) ReadField1(iprot thrift.TProtocol) error {
+	_field := NewBlogReq()
+	if err := _field.Read(iprot); err != nil {
+		return err
+	}
+	p.Request = _field
+	return nil
+}
+
+func (p *BlogSeriviceBlogOfMeArgs) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("BlogOfMe_args"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *BlogSeriviceBlogOfMeArgs) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("request", thrift.STRUCT, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := p.Request.Write(oprot); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *BlogSeriviceBlogOfMeArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("BlogSeriviceBlogOfMeArgs(%+v)", *p)
+
+}
+
+type BlogSeriviceBlogOfMeResult struct {
+	Success []*Blog `thrift:"success,0,optional"`
+}
+
+func NewBlogSeriviceBlogOfMeResult() *BlogSeriviceBlogOfMeResult {
+	return &BlogSeriviceBlogOfMeResult{}
+}
+
+func (p *BlogSeriviceBlogOfMeResult) InitDefault() {
+}
+
+var BlogSeriviceBlogOfMeResult_Success_DEFAULT []*Blog
+
+func (p *BlogSeriviceBlogOfMeResult) GetSuccess() (v []*Blog) {
+	if !p.IsSetSuccess() {
+		return BlogSeriviceBlogOfMeResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+var fieldIDToName_BlogSeriviceBlogOfMeResult = map[int16]string{
+	0: "success",
+}
+
+func (p *BlogSeriviceBlogOfMeResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *BlogSeriviceBlogOfMeResult) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 0:
+			if fieldTypeId == thrift.LIST {
+				if err = p.ReadField0(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_BlogSeriviceBlogOfMeResult[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *BlogSeriviceBlogOfMeResult) ReadField0(iprot thrift.TProtocol) error {
+	_, size, err := iprot.ReadListBegin()
+	if err != nil {
+		return err
+	}
+	_field := make([]*Blog, 0, size)
+	values := make([]Blog, size)
+	for i := 0; i < size; i++ {
+		_elem := &values[i]
+		_elem.InitDefault()
+
+		if err := _elem.Read(iprot); err != nil {
+			return err
+		}
+
+		_field = append(_field, _elem)
+	}
+	if err := iprot.ReadListEnd(); err != nil {
+		return err
+	}
+	p.Success = _field
+	return nil
+}
+
+func (p *BlogSeriviceBlogOfMeResult) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("BlogOfMe_result"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField0(oprot); err != nil {
+			fieldId = 0
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *BlogSeriviceBlogOfMeResult) writeField0(oprot thrift.TProtocol) (err error) {
+	if p.IsSetSuccess() {
+		if err = oprot.WriteFieldBegin("success", thrift.LIST, 0); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteListBegin(thrift.STRUCT, len(p.Success)); err != nil {
+			return err
+		}
+		for _, v := range p.Success {
+			if err := v.Write(oprot); err != nil {
+				return err
+			}
+		}
+		if err := oprot.WriteListEnd(); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 end error: ", p), err)
+}
+
+func (p *BlogSeriviceBlogOfMeResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("BlogSeriviceBlogOfMeResult(%+v)", *p)
 
 }
 

@@ -40,10 +40,6 @@ func Follow(ctx context.Context, c *app.RequestContext) {
 func IsFollowed(ctx context.Context, c *app.RequestContext) {
 	var err error
 	id := c.Param("id")
-	if err != nil {
-		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
-		return
-	}
 	resp, err := service.NewIsFollowedService(ctx, c).Run(id)
 	if err != nil {
 		utils.SendErrResponse(ctx, c, consts.StatusOK, err)

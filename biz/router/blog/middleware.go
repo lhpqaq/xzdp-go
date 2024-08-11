@@ -80,3 +80,18 @@ func _getfollowblogMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _blog0Mw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _of0Mw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _blogofmeMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

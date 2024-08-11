@@ -46,8 +46,11 @@ func (h *GetFollowBlogService) Run(req *blog.FollowBlogReq) (resp *blog.FollowBl
 	}
 	//fmt.Printf("blogs: %v\n", blogs)
 	var res blog.FollowBlogRresp
-	res.Blogs = blogs
-	res.MinTime = strconv.FormatInt(int64(zSet[len(zSet)-1].Score), 10)
+	res.List = blogs
+	res.MinTime = "0"
+	if len(zSet) > 0 {
+		res.MinTime = strconv.FormatInt(int64(zSet[len(zSet)-1].Score), 10)
+	}
 	// 取最小分数的记录数
 	var offset int64 = 0
 	minScore := zSet[len(zSet)-1].Score

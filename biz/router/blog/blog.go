@@ -20,9 +20,24 @@ func Register(r *server.Hertz) {
 	{
 		_blog := root.Group("/blog", _blogMw()...)
 		_blog.GET("/hot", append(_gethotblogMw(), blog.GetHotBlog)...)
+		_blog.DELETE("/:id", append(_deleteblogMw(), blog.DeleteBlog)...)
+		_blog.GET("/:id", append(_getblogMw(), blog.GetBlog)...)
+		_blog.POST("/post", append(_postblogMw(), blog.PostBlog)...)
+		{
+			_like := _blog.Group("/like", _likeMw()...)
+			_like.PUT("/:id", append(_likeblogMw(), blog.LikeBlog)...)
+		}
+		{
+			_likes := _blog.Group("/likes", _likesMw()...)
+			_likes.GET("/:id", append(_getlikesMw(), blog.GetLikes)...)
+		}
 		{
 			_of := _blog.Group("/of", _ofMw()...)
-			_of.GET("/me", append(_getblogofmeMw(), blog.GetBlogOfMe)...)
+			_of.GET("/follow", append(_getfollowblogMw(), blog.GetFollowBlog)...)
+		}
+		{
+			_user := _blog.Group("/user", _userMw()...)
+			_user.GET("/:id", append(_getuserblogMw(), blog.GetUserBlog)...)
 		}
 	}
 }

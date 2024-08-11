@@ -38,3 +38,4 @@ conf/test/conf.yaml
 conf/dev/conf.yaml
 conf/online/conf.yaml
 .hz
+resources/nginx-1.18.0

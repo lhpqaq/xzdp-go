@@ -7,6 +7,8 @@ update_api:
 	hz update --mod=xzdp --idl=idl/user.thrift --customize_package=template/package.yaml
 	hz update --mod=xzdp --idl=idl/shop.thrift --customize_package=template/package.yaml
 	hz update --mod=xzdp --idl=idl/follow.thrift --customize_package=template/package.yaml
+	hz update --mod=xzdp --idl=idl/image.thrift --customize_package=template/package.yaml
+	hz update --mod=xzdp --idl=idl/blog_comment.thrift --customize_package=template/package.yaml
 
 cleanhz:
 	rm -rf biz *.go go.sum go.mod build.sh .hz conf output script .gitignore readme.md

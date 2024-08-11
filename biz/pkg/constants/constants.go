@@ -13,5 +13,13 @@ const (
 	CACHE_SHOP_TTL           = time.Minute * 30
 	LOCK_SHOP_KEY            = "lock:shop:"
 	LOGIN_CODE_EXPIRE        = 300
-	FOLLOW_USER_KEY          = "follow:user:"
+)
+
+const (
+	FOLLOW_USER_KEY = "follow:user:"
+)
+
+const (
+	BLOG_LIKED_KEY = "blog:liked:"
+	FEED_KEY       = "feed:"
 )

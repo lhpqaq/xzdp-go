@@ -6,15 +6,15 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/test/assert"
-	blog "xzdp/biz/model/blog"
+	blog_comment "xzdp/biz/model/blog_comment"
 )
 
-func TestGetBlogOfMeService_Run(t *testing.T) {
+func TestGetCommentService_Run(t *testing.T) {
 	ctx := context.Background()
 	c := app.NewContext(1)
-	s := NewGetBlogOfMeService(ctx, c)
+	s := NewGetCommentService(ctx, c)
 	// init req and assert value
-	req := &blog.BlogReq{}
+	req := &blog_comment.CommentReq{}
 	resp, err := s.Run(req)
 	assert.DeepEqual(t, nil, resp)
 	assert.DeepEqual(t, nil, err)

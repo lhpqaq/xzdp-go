@@ -1,4 +1,4 @@
-// idl/blog.thrift
+// idl/blog_comment.thrift
 namespace go blog_comment
 struct Empty {}
 

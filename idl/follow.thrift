@@ -1,4 +1,4 @@
-// idl/blog.thrift
+// idl/follow.thrift
 namespace go follow
 include "./user.thrift"
 

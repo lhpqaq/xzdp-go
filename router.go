@@ -3,13 +3,8 @@
 package main
 
 import (
-	"context"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/app/server"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"github.com/hertz-contrib/sse"
-	"net/http"
-	"time"
 	handler "xzdp/biz/handler"
 )
 
@@ -17,24 +12,4 @@ import (
 func customizedRegister(r *server.Hertz) {
 	r.GET("/ping", handler.Ping)
 	r.StaticFS("/imgs", &app.FS{Root: "upload/", GenerateIndexPages: false})
-	r.GET("/message", func(ctx context.Context, c *app.RequestContext) {
-		// 客户端可以通过 Last-Event-ID 告知服务器收到的最后一个事件
-		lastEventID := sse.GetLastEventID(c)
-		hlog.CtxInfof(ctx, "last event ID: %s", lastEventID)
-
-		// 在第一次渲染调用之前必须先行设置状态代码和响应头文件
-		c.SetStatusCode(http.StatusOK)
-		s := sse.NewStream(c)
-
-		for t := range time.NewTicker(10 * time.Second).C {
-			event := &sse.Event{
-				Event: "timestamp",
-				Data:  []byte(t.Format(time.RFC3339)),
-			}
-			err := s.Publish(event)
-			if err != nil {
-				return
-			}
-		}
-	})
 }

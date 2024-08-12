@@ -1,4 +1,4 @@
-// idl/blog.thrift
+// idl/image.thrift
 namespace go image
 struct Empty {}
 struct UploadResp {

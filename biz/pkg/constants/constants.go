@@ -15,11 +15,26 @@ const (
 	LOGIN_CODE_EXPIRE        = 300
 )
 
+// cache 相关
+const (
+	CACHE_USERDTO_KEY    = "userdto:"
+	CACHE_USERDTO_EXPIRE = time.Minute * 5
+)
+
+// follow 相关
 const (
 	FOLLOW_USER_KEY = "follow:user:"
 )
 
+// blog 相关
 const (
 	BLOG_LIKED_KEY = "blog:liked:"
 	FEED_KEY       = "feed:"
+)
+
+// message 相关
+const (
+	MESSAGE_STREAM_KEY = "message.stream:"
+	STREAM_READ_GROUP  = "stream.group:1"
+	STREAM_CONSUMER    = "stream.consume:"
 )

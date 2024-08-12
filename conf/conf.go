@@ -9,7 +9,6 @@ import (
 	"sync"
 
 	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"github.com/kr/pretty"
 	"gopkg.in/validator.v2"
 	"gopkg.in/yaml.v2"
 )
@@ -93,7 +92,7 @@ func initConf() {
 
 	conf.Env = GetEnv()
 
-	pretty.Printf("%+v\n", conf)
+	//pretty.Printf("%+v\n", conf)
 }
 
 func GetEnv() string {

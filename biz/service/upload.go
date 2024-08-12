@@ -22,5 +22,5 @@ func (h *UploadService) Run(req *[]byte) (resp *image.UploadResp, err error) {
 	// hlog.CtxInfof(h.Context, "resp = %+v", resp)
 	//}()
 	// todo edit your code
-	return
+	return nil, nil
 }

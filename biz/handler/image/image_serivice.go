@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"xzdp/biz/model/image"
+	"xzdp/biz/service"
 	"xzdp/biz/utils"
 )
 
@@ -16,6 +17,13 @@ import (
 // @router /upload [POST]
 func Upload(ctx context.Context, c *app.RequestContext) {
 	var _ image.Empty
+	var req []byte
+	_, err := service.NewUploadService(ctx, c).Run(&req)
+	if err != nil {
+		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		return
+	}
+	// 以上代码无用,因为每次更新idl都会引入service和model导致编译不通过
 	file, err := c.FormFile("file")
 	if err != nil {
 		utils.SendErrResponse(ctx, c, consts.StatusOK, err)

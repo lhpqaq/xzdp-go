@@ -23,10 +23,10 @@ func allowAllCors(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 	c.Next(ctx)
-	hlog.Debugf("AllowCors:%+v", string(c.Request.Path()))
+	hlog.Debugf("AllowCors:Method:%+v,Path:%+v", string(c.Request.Method()), string(c.Request.Path()))
 }
 
-// CorsByRules 按照配置处理跨域请求
+// Cors 按照配置处理跨域请求
 func Cors(ctx context.Context, c *app.RequestContext) {
 	mode := conf.GetConf().Cors.Mode
 	// 放行全部

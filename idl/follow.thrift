@@ -11,8 +11,8 @@ struct Follow {
 }
 
 struct FollowReq {
-    1: bool isFollow(api.query="isFollow")
-    2: i64 targetUser(api.query="id")
+    1: bool isFollow
+    2: i64 targetUser
 }
 
 struct FollowResp {

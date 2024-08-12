@@ -3,9 +3,9 @@ package follow
 import (
 	"context"
 	"errors"
-
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	"strconv"
 	follow "xzdp/biz/model/follow"
 	"xzdp/biz/service"
 	"xzdp/biz/utils"
@@ -15,11 +15,21 @@ import (
 // @router /follow [GET]
 func Follow(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req follow.FollowReq
-	err = c.BindAndValidate(&req)
+	id := c.Param("id")
+	isFollow := c.Param("isFollow")
+	intVal, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
 		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
 		return
+	}
+	boolVal, err := strconv.ParseBool(isFollow)
+	if err != nil {
+		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		return
+	}
+	req := follow.FollowReq{
+		TargetUser: intVal,
+		IsFollow:   boolVal,
 	}
 	targetUserId := req.GetTargetUser()
 	// 如果参数不合法，直接返回

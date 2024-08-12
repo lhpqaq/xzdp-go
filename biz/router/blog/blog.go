@@ -17,12 +17,32 @@ import (
 func Register(r *server.Hertz) {
 
 	root := r.Group("/", rootMw()...)
+	root.POST("/blog", append(_postblogMw(), blog.PostBlog)...)
+	_blog := root.Group("/blog", _blogMw()...)
+	_blog.DELETE("/:id", append(_deleteblogMw(), blog.DeleteBlog)...)
+	_blog.GET("/:id", append(_getblogMw(), blog.GetBlog)...)
 	{
-		_blog := root.Group("/blog", _blogMw()...)
-		_blog.GET("/hot", append(_gethotblogMw(), blog.GetHotBlog)...)
+		_like := _blog.Group("/like", _likeMw()...)
+		_like.PUT("/:id", append(_likeblogMw(), blog.LikeBlog)...)
+	}
+	{
+		_likes := _blog.Group("/likes", _likesMw()...)
+		_likes.GET("/:id", append(_getlikesMw(), blog.GetLikes)...)
+	}
+	{
+		_of := _blog.Group("/of", _ofMw()...)
+		_of.GET("/follow", append(_getfollowblogMw(), blog.GetFollowBlog)...)
+	}
+	{
+		_blog0 := root.Group("/blog", _blog0Mw()...)
+		_blog0.GET("/hot", append(_gethotblogMw(), blog.GetHotBlog)...)
 		{
-			_of := _blog.Group("/of", _ofMw()...)
-			_of.GET("/me", append(_getblogofmeMw(), blog.GetBlogOfMe)...)
+			_of0 := _blog0.Group("/of", _of0Mw()...)
+			_of0.GET("/me", append(_blogofmeMw(), blog.BlogOfMe)...)
+		}
+		{
+			_user := _blog0.Group("/user", _userMw()...)
+			_user.GET("/:id", append(_getuserblogMw(), blog.GetUserBlog)...)
 		}
 	}
 }

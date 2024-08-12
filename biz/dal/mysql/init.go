@@ -33,6 +33,9 @@ func Init() {
 				if createTimeField := tx.Statement.Schema.LookUpField("create_time"); createTimeField != nil {
 					createTimeField.Set(context.Background(), tx.Statement.ReflectValue, now)
 				}
+				if createTimeField := tx.Statement.Schema.LookUpField("update_time"); createTimeField != nil {
+					createTimeField.Set(context.Background(), tx.Statement.ReflectValue, now)
+				}
 			}
 		}
 	})

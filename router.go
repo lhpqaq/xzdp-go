@@ -3,14 +3,13 @@
 package main
 
 import (
-	handler "xzdp/biz/handler"
-
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/app/server"
+	handler "xzdp/biz/handler"
 )
 
 // customizeRegister registers customize routers.
 func customizedRegister(r *server.Hertz) {
 	r.GET("/ping", handler.Ping)
-
-	// your code ...
+	r.StaticFS("/imgs", &app.FS{Root: "upload/", GenerateIndexPages: false})
 }

@@ -17,14 +17,22 @@ import (
 func Register(r *server.Hertz) {
 
 	root := r.Group("/", rootMw()...)
-	root.PUT("/follow", append(_follow0Mw(), follow.Follow)...)
-	_follow := root.Group("/follow", _followMw()...)
 	{
-		_common := _follow.Group("/common", _commonMw()...)
-		_common.GET("/:id", append(_commonfollowMw(), follow.CommonFollow)...)
-	}
-	{
-		_isfollowed := _follow.Group("/isFollowed", _isfollowedMw()...)
-		_isfollowed.GET("/:id", append(_isfollowed0Mw(), follow.IsFollowed)...)
+		_follow := root.Group("/follow", _followMw()...)
+		{
+			_common := _follow.Group("/common", _commonMw()...)
+			_common.GET("/:id", append(_commonfollowMw(), follow.CommonFollow)...)
+		}
+		{
+			_id := _follow.Group("/:id", _idMw()...)
+			_id.PUT("/:isFollow", append(_follow0Mw(), follow.Follow)...)
+		}
+		{
+			_or := _follow.Group("/or", _orMw()...)
+			{
+				_not := _or.Group("/not", _notMw()...)
+				_not.GET("/:id", append(_isfollowedMw(), follow.IsFollowed)...)
+			}
+		}
 	}
 }

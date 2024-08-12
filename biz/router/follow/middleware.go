@@ -40,3 +40,18 @@ func _isfollowed0Mw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _idMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _orMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _notMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

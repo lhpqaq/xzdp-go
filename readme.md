@@ -16,7 +16,17 @@ nginx -c ~/nginx-1.18.0/conf/nginx.conf -p ~/nginx-1.18.0
 ```
 
 浏览器打开`http://127.0.0.1:8080`
-
+* 使用该前端，发布博客要使用上传图片，需要配置`nginx.conf`增加以下配置：
+```shell
+        location /imgs {
+            proxy_pass http://127.0.0.1:8080/imgs;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_redirect off;
+        }
+```
 #### 后端 
 - 在mysql新建数据库表`xzdp`  
 - 将`resources/xzdp.sql`导入到表`xzdp`  

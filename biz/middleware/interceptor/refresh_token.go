@@ -2,20 +2,19 @@ package interceptor
 
 import (
 	"context"
+	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"time"
 	"xzdp/biz/dal/redis"
 	model "xzdp/biz/model/user"
 	"xzdp/biz/pkg/constants"
 	"xzdp/biz/utils"
 	"xzdp/conf"
-
-	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 
 func CheckToken(ctx context.Context, c *app.RequestContext) {
-	hlog.CtxInfof(ctx, "check token interceptor")
-	if conf.GetEnv() != "online" {
+	hlog.CtxInfof(ctx, "check token interceptor:%+v", conf.GetEnv())
+	if conf.GetEnv() == "dev" {
 		userdto := model.UserDTO{
 			ID:       2,
 			NickName: "法外狂徒张三",
@@ -51,7 +50,7 @@ func CheckToken(ctx context.Context, c *app.RequestContext) {
 
 func LoginInterceptor(ctx context.Context, c *app.RequestContext) {
 	hlog.CtxInfof(ctx, "login interceptor")
-	if conf.GetEnv() != "online" {
+	if conf.GetEnv() == "dev" {
 		c.Next(ctx)
 		return
 	}

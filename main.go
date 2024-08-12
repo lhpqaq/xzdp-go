@@ -17,7 +17,7 @@ import (
 func main() {
 	h := server.Default(server.WithHostPorts(conf.GetConf().Hertz.Address))
 	h.Use(interceptor.CheckToken)
-
+	h.Use(interceptor.Cors)
 	excludedPaths := []string{
 		"/shop",
 		"/voucher",
@@ -26,6 +26,10 @@ func main() {
 		"/blog/hot",
 		"/user/code",
 		"/user/login",
+		"/follow",
+		"/imgs",
+		"/message",
+		"/blog",
 	}
 
 	// excludedPaths := map[string]bool{

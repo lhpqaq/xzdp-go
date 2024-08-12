@@ -1,4 +1,4 @@
-// idl/blog.thrift
+// idl/follow.thrift
 namespace go follow
 include "./user.thrift"
 
@@ -11,8 +11,8 @@ struct Follow {
 }
 
 struct FollowReq {
-    1: bool isFollow(api.query="isFollow")
-    2: i64 targetUser(api.query="targetUser")
+    1: bool isFollow
+    2: i64 targetUser
 }
 
 struct FollowResp {
@@ -29,7 +29,7 @@ struct commonFollowResp{
     1: list<user.UserDTO> commonFollows;
 }
 service FollowService {
-    FollowResp Follow(1: FollowReq request) (api.put="/follow");
-    isFollowedResp isFollowed(1: string request) (api.get="/follow/isFollowed/:id");
+    FollowResp Follow(1: FollowReq request) (api.put="/follow/:id/:isFollow");
+    isFollowedResp isFollowed(1: string request) (api.get="/follow/or/not/:id");
     commonFollowResp commonFollow(1: string request) (api.get="/follow/common/:id");
 }

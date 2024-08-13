@@ -63,11 +63,6 @@ func IsFollowed(ctx context.Context, c *app.RequestContext) {
 func CommonFollow(ctx context.Context, c *app.RequestContext) {
 	var err error
 	id := c.Param("id")
-	if err != nil {
-		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
-		return
-	}
-
 	resp, err := service.NewCommonFollowService(ctx, c).Run(id)
 
 	if err != nil {

@@ -5,7 +5,6 @@ import (
 	"errors"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"gorm.io/gorm"
 	"strconv"
 	"xzdp/biz/dal/mysql"
 	"xzdp/biz/dal/redis"
@@ -39,16 +38,16 @@ func (h *FollowService) Run(req *follow.FollowReq) (resp *follow.FollowResp, err
 	// 如果是true,则添加关注，将用户id和被关注用户的id存入数据库
 	if isFollow {
 		// 判断是否已经关注
-		if !errors.Is(mysql.DB.Where("user_id = ? and follow_user_id = ?", myID, targetUserId).First(&follow.Follow{}).Error, gorm.ErrRecordNotFound) {
-			return &follow.FollowResp{RespBody: &f}, nil
-		}
-		if !errors.Is(mysql.DB.Create(&f).Error, nil) {
+		if !errors.Is(redis.RedisClient.SIsMember(h.Context, constants.FOLLOW_USER_KEY+strconv.FormatInt(myID, 10), targetUserId).Err(), nil) {
 			return nil, errors.New("关注失败")
 		}
 		// 将关注的用户存入redis的set中
 		if !errors.Is(redis.RedisClient.SAdd(h.Context, constants.FOLLOW_USER_KEY+strconv.FormatInt(myID, 10), targetUserId).Err(), nil) {
-			hlog.CtxErrorf(h.Context, "err = %s", err.Error())
+			hlog.CtxErrorf(h.Context, "err = %v", err)
 			return nil, err
+		}
+		if !errors.Is(mysql.DB.Create(&f).Error, nil) {
+			return nil, errors.New("关注失败")
 		}
 		return &follow.FollowResp{RespBody: &f}, nil
 	}
@@ -58,7 +57,7 @@ func (h *FollowService) Run(req *follow.FollowReq) (resp *follow.FollowResp, err
 	}
 	// 将取消关注的用户从redis的set中删除
 	if !errors.Is(redis.RedisClient.SRem(h.Context, constants.FOLLOW_USER_KEY+strconv.FormatInt(myID, 10), targetUserId).Err(), nil) {
-		hlog.CtxErrorf(h.Context, "err = %s", err.Error())
+		hlog.CtxErrorf(h.Context, "err = %v", err)
 		return nil, err
 	}
 	return &follow.FollowResp{RespBody: &f}, nil

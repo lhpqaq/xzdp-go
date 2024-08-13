@@ -37,33 +37,14 @@ func (h *CommonFollowService) Run(targetUserID string) (resp *follow.CommonFollo
 	if err != nil {
 		return nil, err
 	}
-	// 遍历arr，转换为userDTO
-	//var users []*model.UserDTO
-	//for _, v := range arr {
-	//	id, err1 := strconv.ParseInt(v, 10, 64)
-	//	if err1 != nil {
-	//		return nil, err
-	//	}
-	//	var interUser *model.User
-	//	mysql.DB.First(&interUser, "id=?", id)
-	//	u := &model.UserDTO{
-	//		ID:       id,
-	//		NickName: interUser.NickName,
-	//		Icon:     interUser.Icon,
-	//	}
-	//	users = append(users, u)
-	//}
 	var users []*model.User
 	if !errors.Is(mysql.DB.Where("id in ?", arr).Find(&users).Error, nil) {
 		return nil, errors.New("查询失败")
 	}
 	var userDto []*model.UserDTO
+	// 遍历arr，转换为userDTO
 	for _, u := range users {
-		d := &model.UserDTO{
-			ID:       u.ID,
-			NickName: u.NickName,
-			Icon:     u.Icon,
-		}
+		d := utils.UserToUserDTO(u)
 		userDto = append(userDto, d)
 	}
 	return &follow.CommonFollowResp{

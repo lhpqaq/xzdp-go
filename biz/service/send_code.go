@@ -29,9 +29,14 @@ func (h *SendCodeService) Run(req *user.UserLoginFrom) (resp *user.Result, err e
 	}()
 	// todo edit your code
 	phone := req.Phone
+
+	if !utils.ValidateMobile(phone) {
+		return nil, errors.New("phone isn't validate")
+	}
 	if phone == "" {
 		return nil, errors.New("phone can't be empty")
 	}
+
 	code := utils.GenerateDigits(6)
 	err = redis.RedisClient.Set(h.Context, constants.LOGIN_CODE_KEY+phone, code, constants.LOGIN_CODE_EXPIRE*time.Second).Err() // add expiration
 	if err != nil {

@@ -22,7 +22,7 @@ struct CommentReq {
 struct LikeResp {
     1: bool isLiked;
 }
-service CommentSerivice {
+service CommentService {
     // 获取热评
     list<BlogComment> GetHotComment(1: CommentReq request) (api.get="/comment/hot");
     // 获取评论

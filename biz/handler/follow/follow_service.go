@@ -3,12 +3,13 @@ package follow
 import (
 	"context"
 	"errors"
-	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"strconv"
 	follow "xzdp/biz/model/follow"
-	"xzdp/biz/service"
+	service "xzdp/biz/service/follow"
 	"xzdp/biz/utils"
+
+	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
 // Follow .

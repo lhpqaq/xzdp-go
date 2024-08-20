@@ -67,6 +67,7 @@ func ShopInfo(ctx context.Context, c *app.RequestContext) {
 		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
 		return
 	}
+
 	resp, err := service.NewShopInfoService(ctx, c).Run(id)
 
 	if err != nil {

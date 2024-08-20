@@ -4,38 +4,18 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
+	redis2 "github.com/go-redis/redis/v8"
+	"gorm.io/gorm"
 	"time"
 	"xzdp/biz/dal/redis"
 	"xzdp/biz/model/shop"
 	"xzdp/biz/pkg/constants"
-
-	redis2 "github.com/go-redis/redis/v8"
-	"gorm.io/gorm"
-
-	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 
 func QueryShopType(ctx context.Context) ([]*shop.ShopType, error) {
 	var shopTypeList []*shop.ShopType
 
-	// 从 Redis 获取数据
-	shopTypeJsonList, err := redis.RedisClient.LRange(ctx, constants.CACHE_SHOP_TYPE_LIST_KEY, 0, -1).Result()
-	if err == nil && len(shopTypeJsonList) > 0 {
-		for _, shopTypeJson := range shopTypeJsonList {
-			var shopType shop.ShopType
-			err := json.Unmarshal([]byte(shopTypeJson), &shopType)
-			if err != nil {
-				hlog.CtxErrorf(ctx, "Error unmarshalling shop type: %v", err)
-				continue
-			}
-			shopTypeList = append(shopTypeList, &shopType)
-		}
-		return shopTypeList, nil
-	}
-
-	// 如果 Redis 没有数据，从数据库获取数据
-	err = DB.Order("sort asc").Find(&shopTypeList).Error
+	err = DB.WithContext(ctx).Order("sort asc").Find(&shopTypeList).Error
 	if err != nil {
 		return nil, err
 	}
@@ -44,21 +24,21 @@ func QueryShopType(ctx context.Context) ([]*shop.ShopType, error) {
 		return nil, fmt.Errorf("no exist shop type")
 	}
 
-	// 将数据存储到 Redis
-	for _, shopType := range shopTypeList {
-		shopTypeJson, err := json.Marshal(shopType)
-		if err != nil {
-			log.Printf("Error marshalling shop type: %v", err)
-			continue
-		}
-		redis.RedisClient.RPush(ctx, constants.CACHE_SHOP_TYPE_LIST_KEY, shopTypeJson)
-	}
-
 	return shopTypeList, nil
 }
 
 func QueryByID(ctx context.Context, id int64) (*shop.Shop, error) {
-	return queryByID(ctx, id)
+	var shop shop.Shop
+	err = DB.WithContext(ctx).First(&shop, id).Error
+
+	if err != nil {
+		return nil, err
+	}
+	if shop.ID == 0 {
+		return nil, fmt.Errorf("shop isn't exist")
+	}
+
+	return &shop, nil
 }
 
 func queryByID1(ctx context.Context, id int64) (*shop.Shop, error) {
@@ -97,8 +77,7 @@ func queryByID1(ctx context.Context, id int64) (*shop.Shop, error) {
 
 	return &shop, nil
 }
-
-func queryByID(ctx context.Context, id int64) (*shop.Shop, error) {
+func queryByID2(ctx context.Context, id int64) (*shop.Shop, error) {
 	key := fmt.Sprintf("%s%d", constants.CACHE_SHOP_KEY, id)
 	lockKey := fmt.Sprintf("%s%d", constants.LOCK_SHOP_KEY, id)
 
@@ -113,7 +92,7 @@ func queryByID(ctx context.Context, id int64) (*shop.Shop, error) {
 	if !isLocked {
 		// 锁获取失败，等待后重试
 		time.Sleep(50 * time.Millisecond)
-		return queryByID(ctx, id)
+		return queryByID2(ctx, id)
 	}
 
 	// 2.2 获取锁成功，再次检查缓存
@@ -145,4 +124,8 @@ func queryByID(ctx context.Context, id int64) (*shop.Shop, error) {
 
 	redis.UnLock(ctx, lockKey)
 	return &shop, nil
+}
+
+func queryByID3(ctx context.Context, id int64) (*shop.Shop, error) {
+	return nil, nil
 }

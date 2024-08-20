@@ -4,8 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"log"
-	"time"
 	"xzdp/biz/model/shop"
 
 	"github.com/go-redis/redis/v8"
@@ -30,17 +28,4 @@ func GetShopFromCache(ctx context.Context, key string) (*shop.Shop, error) {
 	}
 
 	return nil, errors.New("unknown error")
-}
-
-func TryLock(ctx context.Context, key string) bool {
-	success, err := RedisClient.SetNX(ctx, key, "1", 10*time.Second).Result()
-	if err != nil {
-		log.Printf("Error acquiring lock: %v", err)
-		return false
-	}
-	return success
-}
-
-func UnLock(ctx context.Context, key string) {
-	RedisClient.Del(ctx, key)
 }

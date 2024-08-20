@@ -125,7 +125,6 @@ func queryByID2(ctx context.Context, id int64) (*shop.Shop, error) {
 	redis.UnLock(ctx, lockKey)
 	return &shop, nil
 }
-
 func queryByID3(ctx context.Context, id int64) (*shop.Shop, error) {
 	return nil, nil
 }

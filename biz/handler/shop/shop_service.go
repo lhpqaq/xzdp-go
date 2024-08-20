@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	shop "xzdp/biz/model/shop"
-	"xzdp/biz/service"
+	service "xzdp/biz/service/shop"
 	"xzdp/biz/utils"
 
 	"github.com/cloudwego/hertz/pkg/app"

@@ -48,8 +48,6 @@ nginx -c ~/nginx-1.18.0/conf/nginx.conf -p ~/nginx-1.18.0
 
 不要修改`model/SERVICE_NAME/SERVICE_NAME.go`的内容，因为会被覆盖。  
 
-项目结构可能有点乱，**欢迎大佬来调整项目结构和修改`template`里的文件。**  
-
 ### 如何合作
 
 欢迎以任何格式提交Issue和PR！或者➕我v：`lhpqaq1`. 有疑问也请联系我。   

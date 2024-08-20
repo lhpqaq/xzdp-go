@@ -13,9 +13,9 @@ layouts:
       {{- end}}
       {{- range $_, $OutDir := $OutDirs}}
         {{if eq $OutDir "" -}}
-          "{{$.ProjPackage}}/biz/service"
+          service "{{$.ProjPackage}}/biz/service/{{$.PackageName}}"
         {{- else -}}
-          "{{$.ProjPackage}}/biz/service/{{$OutDir}}"
+          service "{{$.ProjPackage}}/biz/service/{{$OutDir}}"
         {{- end -}}
       {{- end}}
       "{{$.ProjPackage}}/biz/utils"
@@ -83,7 +83,7 @@ layouts:
         }
        utils.SendSuccessResponse(ctx, c, consts.StatusOK, resp)
       }
-  - path: "biz/service/{{.HandlerGenPath}}/{{ToSnakeCase .MethodName}}.go"
+  - path: "biz/service/{{.GenPackage}}/{{ToSnakeCase .MethodName}}.go"
     loop_method: true
     update_behavior:
       type: "skip"
@@ -114,7 +114,7 @@ layouts:
         // todo edit your code
        return
       }
-  - path: "biz/service/{{.HandlerGenPath}}/{{ToSnakeCase .MethodName}}_test.go"
+  - path: "biz/service/{{.GenPackage}}/{{ToSnakeCase .MethodName}}_test.go"
     loop_method: true
     update_behavior:
       type: "skip"

@@ -13,6 +13,6 @@ struct MessageResp {
   1: user.UserDTO user;
   2: Message message;
 }
-service MessageSerivice {
+service MessageService {
    string Sse(1: string request) (api.get="/message/sse");
 }

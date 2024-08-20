@@ -4,6 +4,6 @@ struct Empty {}
 struct UploadResp {
     1: string url;
 }
-service ImageSerivice {
+service ImageService {
     UploadResp Upload(1: binary request) (api.post="/upload/blog");
 }

@@ -4,7 +4,7 @@ import (
 	"context"
 
 	model "xzdp/biz/model/user"
-	"xzdp/biz/service"
+	service "xzdp/biz/service/user"
 	"xzdp/biz/utils"
 
 	"github.com/cloudwego/hertz/pkg/app"

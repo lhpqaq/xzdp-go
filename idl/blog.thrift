@@ -36,7 +36,7 @@ struct FollowBlogRresp {
     2: string minTime (api.query="minTime");
     3: i64 offset (api.query="offset");
 }
-service BlogSerivice {
+service BlogService {
     list<Blog> GetHotBlog(1: BlogReq request) (api.get="/blog/hot");
     list<Blog> GetUserBlog(1: BlogReq request) (api.get="/blog/user/:id");
     list<Blog> BlogOfMe(1: BlogReq request) (api.get="/blog/of/me");

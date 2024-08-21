@@ -62,3 +62,13 @@ func RandomUUID() (string, error) {
 
 	// return fmt.Sprintf("%x-%x-%x-%x-%x", randomBytes[0:4], randomBytes[4:6], randomBytes[6:8], randomBytes[8:10], randomBytes[10:]), nil
 }
+
+func RandomString(n int) string {
+	once.Do(RandInit)
+	letters := letterBytes + digitBytes
+	b := make([]byte, n)
+	for i := range b {
+		b[i] = letters[rand.Intn(len(letters))]
+	}
+	return string(b)
+}

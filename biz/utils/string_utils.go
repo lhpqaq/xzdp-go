@@ -1,6 +1,8 @@
 package utils
 
-import "regexp"
+import (
+	"regexp"
+)
 
 func ValidateMobile(phone string) bool {
 	var re = regexp.MustCompile(`^1[3-9]\d{9}$`)

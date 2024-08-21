@@ -11,8 +11,10 @@ const (
 	CACHE_SHOP_KEY           = "cache:shop:"
 	CACHE_NULL_TTL           = time.Minute * 2
 	CACHE_SHOP_TTL           = time.Minute * 30
-	LOCK_SHOP_KEY            = "lock:shop:"
-	LOGIN_CODE_EXPIRE        = 300
+	//CACHE_SHOP_TTL    = 10 * time.Second
+	LOCK_SHOP_KEY     = "lock:shop:"
+	LOCK_KEY          = "lock:"
+	LOGIN_CODE_EXPIRE = 300
 )
 
 // cache 相关

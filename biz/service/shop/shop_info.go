@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"xzdp/biz/dal/redis"
 	"xzdp/biz/pkg/constants"
 
@@ -36,7 +35,7 @@ func (h *ShopInfoService) Run(id int64) (resp *shop.Shop, err error) {
 	if err != nil {
 		return nil, err
 	}
-	hlog.Debugf("test! : %s", resp)
+	//hlog.Debugf("test! : %s", resp)
 
 	return resp, nil
 }
@@ -57,6 +56,5 @@ func WrappedQueryByID(args ...interface{}) (interface{}, error) {
 	}
 
 	result, err := mysql.QueryByID(ctx, id)
-	hlog.Debugf("yangqi! : %v", result)
 	return result, err
 }

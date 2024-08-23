@@ -4,12 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	redis2 "github.com/go-redis/redis/v8"
-	"gorm.io/gorm"
 	"time"
 	"xzdp/biz/dal/redis"
 	"xzdp/biz/model/shop"
 	"xzdp/biz/pkg/constants"
+
+	redis2 "github.com/go-redis/redis/v8"
+	"gorm.io/gorm"
 )
 
 func QueryShopType(ctx context.Context) ([]*shop.ShopType, error) {
@@ -124,7 +125,4 @@ func queryByID2(ctx context.Context, id int64) (*shop.Shop, error) {
 
 	redis.UnLock(ctx, lockKey)
 	return &shop, nil
-}
-func queryByID3(ctx context.Context, id int64) (*shop.Shop, error) {
-	return nil, nil
 }

@@ -6,7 +6,6 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/test/assert"
-	voucher "xzdp/biz/model/voucher"
 )
 
 func TestVoucherListService_Run(t *testing.T) {
@@ -14,8 +13,7 @@ func TestVoucherListService_Run(t *testing.T) {
 	c := app.NewContext(1)
 	s := NewVoucherListService(ctx, c)
 	// init req and assert value
-	req := &voucher.Empty{}
-	resp, err := s.Run(req)
+	resp, err := s.Run(1)
 	assert.DeepEqual(t, nil, resp)
 	assert.DeepEqual(t, nil, err)
 	// todo edit your unit test.

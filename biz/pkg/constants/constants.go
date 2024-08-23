@@ -16,6 +16,7 @@ const (
 	LOCK_KEY          = "lock:"
 	LOGIN_CODE_EXPIRE = 300
 	ID_KEY            = "id:"
+
 )
 
 // cache 相关

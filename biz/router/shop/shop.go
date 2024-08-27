@@ -23,6 +23,8 @@ func Register(r *server.Hertz) {
 		{
 			_of := _shop.Group("/of", _ofMw()...)
 			_of.GET("/type", append(_shopoftypeMw(), shop.ShopOfType)...)
+			_type := _of.Group("/type", _typeMw()...)
+			_type.GET("/geo", append(_shopoftypegeoMw(), shop.ShopOfTypeGeo)...)
 		}
 	}
 	{

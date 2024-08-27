@@ -40,3 +40,13 @@ func _shopinfoMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _typeMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _shopoftypegeoMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

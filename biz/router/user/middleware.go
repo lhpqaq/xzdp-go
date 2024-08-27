@@ -45,3 +45,18 @@ func _infoMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _signMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _usersignMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _usersigncountMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

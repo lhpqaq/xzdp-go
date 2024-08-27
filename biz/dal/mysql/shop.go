@@ -42,6 +42,20 @@ func QueryByID(ctx context.Context, id int64) (*shop.Shop, error) {
 	return &shop, nil
 }
 
+func QueryAllShop(ctx context.Context, shops *[]*shop.Shop) (*[]*shop.Shop, error) {
+	for i := range *shops {
+		dist := (*shops)[i].Distance
+		shop, err := QueryByID(ctx, (*shops)[i].ID)
+		if err != nil {
+			return nil, err
+		}
+		shop.Distance = dist
+		(*shops)[i] = shop
+
+	}
+	return shops, nil
+}
+
 func queryByID1(ctx context.Context, id int64) (*shop.Shop, error) {
 	key := fmt.Sprintf("%s%d", constants.CACHE_SHOP_KEY, id)
 
@@ -125,4 +139,35 @@ func queryByID2(ctx context.Context, id int64) (*shop.Shop, error) {
 
 	redis.UnLock(ctx, lockKey)
 	return &shop, nil
+}
+
+func LoadShopListToCache(ctx context.Context) error {
+	shopMap := make(map[int64][]shop.Shop)
+	var shops []*shop.Shop
+	err := DB.Find(&shops).Error
+	if err != nil {
+		return err
+	}
+	for _, v := range shops {
+		shopMap[v.TypeId] = append(shopMap[v.TypeId], *v)
+	}
+	for typeId, shops := range shopMap {
+		key := constants.SHOP_GEO_KEY + fmt.Sprint(typeId)
+
+		var locations []*redis2.GeoLocation
+		for _, shop := range shops {
+			location := &redis2.GeoLocation{
+				Name:      fmt.Sprint(shop.ID),
+				Longitude: shop.X,
+				Latitude:  shop.Y,
+			}
+			locations = append(locations, location)
+		}
+
+		_, err := redis.RedisClient.GeoAdd(ctx, key, locations...).Result()
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

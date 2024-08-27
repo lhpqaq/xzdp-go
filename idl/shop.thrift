@@ -17,6 +17,14 @@ struct ShopOfTypeReq {
     2: i64 current (api.query="current");
 }
 
+struct ShopOfTypeGeoReq {
+    1: i32 typeId (api.query="typeId");
+    2: i64 current (api.query="current");
+    3: double longitude (api.query="x");
+    4: double latitude (api.query="y");
+    5: double distance (api.query="dist");
+}
+
 struct Shop {
     1: i64 id (go.tag='gorm:"id",redis:"id"');
     2: string name (go.tag='gorm:"name",redis:"name"');
@@ -38,5 +46,6 @@ struct Shop {
 service ShopService {
     list<ShopType> ShopList(1: Empty request) (api.get="/shop-type/list");
     list<Shop> ShopOfType(1: ShopOfTypeReq request) (api.get="/shop/of/type");
+    list<Shop> ShopOfTypeGeo(1: ShopOfTypeGeoReq request) (api.get="/shop/of/type/geo");
     Shop ShopInfo(1: Empty request) (api.get="/shop/:id");
 }

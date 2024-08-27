@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"xzdp/biz/dal/redis"
 	"xzdp/biz/pkg/constants"
 

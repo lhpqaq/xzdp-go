@@ -4,7 +4,7 @@
 
 ## 介绍
 
-因为[黑马程序员redis教程实战篇](https://www.bilibili.com/video/BV1cr4y1671t?p=24  )使用的语言是`java`，不想浪费这个项目所以想用golang重构一下。项目没有采用`gin`框架而是字节的[Hertz](https://www.cloudwego.io/zh/docs/hertz/)框架,**欢迎各位大佬一个合作完成这个项目**  
+因为[黑马程序员redis教程实战篇](https://www.bilibili.com/video/BV1cr4y1671t?p=24  )使用的语言是`java`，不想浪费这个项目所以想用golang重构一下。项目没有采用`gin`框架而是字节的[Hertz](https://www.cloudwego.io/zh/docs/hertz/)框架，**欢迎各位大佬一个合作完成这个项目**  
 
 **没时间完整做的同学可以在[issue](#TODO)中挑选一个模块完成。**  
 
@@ -51,18 +51,23 @@ nginx -c ~/nginx-1.18.0/conf/nginx.conf -p ~/nginx-1.18.0
 ### TODO
 
 - [ ] [优惠券秒杀](https://github.com/lhpqaq/xzdp-go/issues/4)
-- [x] [附近店铺搜索](https://github.com/lhpqaq/xzdp-go/issues/7)
+
 - [ ] [UV统计](https://github.com/lhpqaq/xzdp-go/issues/9)
-- [ ] ...
+
+- [ ] 优化代码
+
+- [ ] Anything
+
+	
 
 
 ### 如何合作
 
 欢迎以任何格式提交Issue和PR！或者➕我v：`lhpqaq1`. 有疑问也请联系我。   
 
-目前默认分支是我的`dev`分支，请大家fork `master`分支。   
-
 点个🌟吧 😘   
+
+贡献指南：https://juejin.cn/post/7196940857308069945  
 
 
 

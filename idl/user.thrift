@@ -60,5 +60,7 @@ service UserService {
     UserResp SendCode(1: UserLoginFrom request) (api.post="/user/code");
     UserResp UserLogin(1: UserLoginFrom request) (api.post="/user/login");
     UserInfo UserInfo(1: UserLoginFrom request) (api.get="/user/info/:id");
+    bool UserSign(1: Empty request) (api.post="/user/sign");
+    i64 UserSignCount(1: Empty request) (api.get="/user/sign/count");
 }
 

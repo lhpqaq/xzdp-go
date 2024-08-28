@@ -6,7 +6,6 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/test/assert"
-	blog_comment "xzdp/biz/model/blog_comment"
 )
 
 func TestLikeCommentService_Run(t *testing.T) {

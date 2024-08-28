@@ -6,7 +6,6 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/test/assert"
-	blog "xzdp/biz/model/blog"
 )
 
 func TestDeleteBlogService_Run(t *testing.T) {

@@ -16,7 +16,7 @@ import (
 
 func main() {
 	h := server.Default(server.WithHostPorts(conf.GetConf().Hertz.Address))
-	h.Use(interceptor.CheckToken)
+    	h.Use(interceptor.CheckToken)
 	h.Use(interceptor.Cors)
 	excludedPaths := []string{
 		"/shop",

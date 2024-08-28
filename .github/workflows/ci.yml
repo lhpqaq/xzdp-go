@@ -54,6 +54,19 @@ jobs:
         ports:
           - 6379:6379
 
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: xzdp
+        ports:
+          - 3306:3306
+        options: >- 
+          --health-cmd="mysqladmin ping --silent" 
+          --health-interval=10s 
+          --health-timeout=5s 
+          --health-retries=3
+
     steps:
     - uses: actions/checkout@v2
 
@@ -65,8 +78,24 @@ jobs:
     - name: Install dependencies
       run: go mod tidy
 
+    - name: Wait for MySQL to be ready
+      run: |
+        until mysqladmin ping -h 127.0.0.1 --silent; do
+          echo "Waiting for MySQL..."
+          sleep 2
+        done
+
+    - name: Import SQL file into MySQL
+      run: |
+        mysql -h 127.0.0.1 -P 3306 -u root -ppassword xzdp < resources/xzdp.sql
+
     - name: Run tests
       env:
         REDIS_HOST: 127.0.0.1
         REDIS_PORT: 6379
+        MYSQL_HOST: 127.0.0.1
+        MYSQL_PORT: 3306
+        MYSQL_USER: root
+        MYSQL_PASSWORD: password
+        MYSQL_DATABASE: xzdp
       run: ./script/test.sh

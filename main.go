@@ -16,7 +16,7 @@ import (
 
 func main() {
 	h := server.Default(server.WithHostPorts(conf.GetConf().Hertz.Address))
-    	h.Use(interceptor.CheckToken)
+	h.Use(interceptor.CheckToken)
 	h.Use(interceptor.Cors)
 	excludedPaths := []string{
 		"/shop",
@@ -32,15 +32,6 @@ func main() {
 		"/blog",
 	}
 
-	// excludedPaths := map[string]bool{
-	// 	"/shop":           true,
-	// 	"/voucher":        true,
-	// 	"/shop-type/list": true,
-	// 	"/upload":         true,
-	// 	"/blog/hot":       true,
-	// 	"/user/code":      true,
-	// 	"/user/login":     true,
-	// }
 	h.Use(func(ctx context.Context, c *app.RequestContext) {
 		path := string(c.Request.Path())
 		for i := 0; i < len(excludedPaths); i++ {

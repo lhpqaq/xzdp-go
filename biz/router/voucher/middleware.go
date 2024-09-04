@@ -25,3 +25,18 @@ func _voucherlistMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _voucher_orderMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _seckillMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _seckillvoucherMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

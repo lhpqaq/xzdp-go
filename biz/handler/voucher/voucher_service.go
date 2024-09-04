@@ -2,6 +2,7 @@ package voucher
 
 import (
 	"context"
+	"errors"
 	"strconv"
 
 	"github.com/cloudwego/hertz/pkg/app"
@@ -34,5 +35,27 @@ func VoucherList(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
+	utils.SendSuccessResponse(ctx, c, consts.StatusOK, resp)
+}
+
+// SeckillVoucher .
+// @router /voucher-order/seckill/:id [POST]
+func SeckillVoucher(ctx context.Context, c *app.RequestContext) {
+	var err error
+	voucherString := c.Param("id")
+	if voucherString == "" {
+		utils.SendErrResponse(ctx, c, consts.StatusOK, errors.New("参数错误"))
+		return
+	}
+	voucherID, err := strconv.ParseInt(voucherString, 10, 64)
+	if err != nil {
+		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		return
+	}
+	resp, err := service.NewSeckillVoucherService(ctx, c).Run(&voucherID)
+	if err != nil {
+		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		return
+	}
 	utils.SendSuccessResponse(ctx, c, consts.StatusOK, resp)
 }

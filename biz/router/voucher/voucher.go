@@ -24,4 +24,11 @@ func Register(r *server.Hertz) {
 			_list.GET("/:id", append(_voucherlistMw(), voucher.VoucherList)...)
 		}
 	}
+	{
+		_voucher_order := root.Group("/voucher-order", _voucher_orderMw()...)
+		{
+			_seckill := _voucher_order.Group("/seckill", _seckillMw()...)
+			_seckill.POST("/:id", append(_seckillvoucherMw(), voucher.SeckillVoucher)...)
+		}
+	}
 }

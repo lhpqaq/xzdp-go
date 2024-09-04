@@ -16,7 +16,6 @@ const (
 	LOCK_SHOP_KEY     = "lock:shop:"
 	LOCK_KEY          = "lock:"
 	LOGIN_CODE_EXPIRE = 300
-	ID_KEY            = "id:"
 	USER_SIGN_KEY     = "user:sign:"
 )
 
@@ -42,4 +41,11 @@ const (
 	MESSAGE_STREAM_KEY = "message.stream:"
 	STREAM_READ_GROUP  = "stream.group:1"
 	STREAM_CONSUMER    = "stream.consume:"
+)
+
+// voucher 相关
+const (
+	BEGIN_TIMESTAMP = 1725120000
+	ICRID_KEY       = "id:"
+	COUNT_BIT       = 32
 )

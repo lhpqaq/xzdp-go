@@ -3,6 +3,7 @@ package mysql
 import (
 	"context"
 	"errors"
+	"fmt"
 	"gorm.io/gorm"
 	"xzdp/biz/model/voucher"
 )
@@ -25,16 +26,28 @@ func QueryVoucherByID(ctx context.Context, id int64) (*voucher.SeckillVoucher, e
 	return &seckillVoucher, err
 }
 
-func QueryVoucherOrderByVoucherID(ctx context.Context, userId int64, id int64) (*voucher.VoucherOrder, error) {
+func QueryVoucherOrderByVoucherID(ctx context.Context, userId int64, id int64) error {
 	var voucherOrder voucher.VoucherOrder
-	if !errors.Is(DB.WithContext(ctx).Where("voucher_id = ? and user_id=?", id, userId).Limit(1).Find(&voucherOrder).Error, gorm.ErrRecordNotFound) {
-		return nil, errors.New("重复下单")
+	err = DB.WithContext(ctx).Where("voucher_id = ? and user_id=?", id, userId).Limit(1).Find(&voucherOrder).Error
+	fmt.Printf("voucherOrder: %v\n", voucherOrder)
+	if err != nil {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return errors.New("重复下单")
+		}
+	} else if voucherOrder.ID != 0 {
+		return errors.New("重复下单")
 	}
-	return &voucherOrder, nil
+	return nil
 }
 
 func UpdateVoucherStock(ctx context.Context, id int64) error {
-	return DB.WithContext(ctx).Model(&voucher.SeckillVoucher{}).Where("voucher_id = ?", id).Update("stock", gorm.Expr("stock - ?", 1)).Error
+	result := DB.WithContext(ctx).Model(&voucher.SeckillVoucher{}).
+		Where("voucher_id = ? and stock > 0", id).
+		Update("stock", gorm.Expr("stock - ?", 1))
+	if result.RowsAffected == 0 {
+		return errors.New("库存不足，扣减失败")
+	}
+	return result.Error
 }
 
 func CreateVoucherOrder(ctx context.Context, voucherOrder *voucher.VoucherOrder) error {

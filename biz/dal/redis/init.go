@@ -59,10 +59,11 @@ func SetStringLogical(ctx context.Context, key string, value interface{}, durati
 
 func GetStringLogical(ctx context.Context, key string, duration time.Duration, dbFallback ArgsFunc, args ...interface{}) (string, error) {
 	redisJson, err := RedisClient.Get(ctx, key).Result()
+	lock := NewLock(ctx, constants.LOCK_KEY+key, "lock", duration)
 	if redisJson == "" || errors.Is(err, redis.Nil) {
-		if TryLock(ctx, constants.LOCK_KEY+key) {
+		if lock.TryLock() {
 			go func() {
-				defer UnLock(ctx, constants.LOCK_KEY+key)
+				defer lock.UnLock("lock")
 				data, err := dbFallback(args...)
 				if err != nil {
 					return
@@ -81,9 +82,9 @@ func GetStringLogical(ctx context.Context, key string, duration time.Duration, d
 		if redisData.ExpiredTime.After(time.Now()) {
 			return redisData.Data, nil
 		} else {
-			if TryLock(ctx, constants.LOCK_KEY+key) {
+			if lock.TryLock() {
 				go func() {
-					defer UnLock(ctx, constants.LOCK_KEY+key)
+					defer lock.UnLock("lock")
 					data, err := dbFallback(args...)
 					if err != nil {
 						return

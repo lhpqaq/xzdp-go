@@ -3,7 +3,6 @@ package mysql
 import (
 	"context"
 	"errors"
-	"fmt"
 	"gorm.io/gorm"
 	"xzdp/biz/model/voucher"
 )
@@ -29,7 +28,6 @@ func QueryVoucherByID(ctx context.Context, id int64) (*voucher.SeckillVoucher, e
 func QueryVoucherOrderByVoucherID(ctx context.Context, userId int64, id int64) error {
 	var voucherOrder voucher.VoucherOrder
 	err = DB.WithContext(ctx).Where("voucher_id = ? and user_id=?", id, userId).Limit(1).Find(&voucherOrder).Error
-	fmt.Printf("voucherOrder: %v\n", voucherOrder)
 	if err != nil {
 		if !errors.Is(err, gorm.ErrRecordNotFound) {
 			return errors.New("重复下单")

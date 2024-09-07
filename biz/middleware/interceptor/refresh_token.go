@@ -14,7 +14,7 @@ import (
 
 func CheckToken(ctx context.Context, c *app.RequestContext) {
 	hlog.CtxInfof(ctx, "check token interceptor:%+v", conf.GetEnv())
-	if conf.GetEnv() == "dev" {
+	if conf.GetEnv() != "online" {
 		userdto := model.UserDTO{
 			ID:       2,
 			NickName: "法外狂徒张三",

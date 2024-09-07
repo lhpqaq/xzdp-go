@@ -101,9 +101,10 @@ func queryByID2(ctx context.Context, id int64) (*shop.Shop, error) {
 	if err == nil {
 		return result, nil
 	}
-
+	lock := redis.NewLock(ctx, lockKey, key, 10)
 	// 2. 缓存未命中，尝试获取锁
-	isLocked := redis.TryLock(ctx, lockKey)
+	isLocked := lock.TryLock()
+	defer lock.UnLock(key)
 	if !isLocked {
 		// 锁获取失败，等待后重试
 		time.Sleep(50 * time.Millisecond)
@@ -113,7 +114,6 @@ func queryByID2(ctx context.Context, id int64) (*shop.Shop, error) {
 	// 2.2 获取锁成功，再次检查缓存
 	result, err = redis.GetShopFromCache(ctx, key)
 	if err == nil {
-		redis.UnLock(ctx, lockKey)
 		return result, nil
 	}
 
@@ -122,22 +122,17 @@ func queryByID2(ctx context.Context, id int64) (*shop.Shop, error) {
 	if err := DB.First(&shop, id).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			redis.RedisClient.Set(ctx, key, "", constants.CACHE_NULL_TTL).Err()
-			redis.UnLock(ctx, lockKey)
 			return nil, err
 		}
-		redis.UnLock(ctx, lockKey)
 		return nil, err
 	}
 
 	// 4. 数据库中存在，缓存数据
 	shopJson, err := json.Marshal(shop)
 	if err != nil {
-		redis.UnLock(ctx, lockKey)
 		return nil, err
 	}
 	redis.RedisClient.Set(ctx, key, string(shopJson), constants.CACHE_SHOP_TTL).Err()
-
-	redis.UnLock(ctx, lockKey)
 	return &shop, nil
 }
 

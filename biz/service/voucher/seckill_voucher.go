@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/cloudwego/hertz/pkg/app"
+	"strconv"
 	"sync"
 	"time"
 	"xzdp/biz/dal/mysql"
@@ -49,8 +50,16 @@ func (h *SeckillVoucherService) Run(req *int64) (resp *int64, err error) {
 	if voucher.GetStock() <= 0 {
 		return nil, errors.New("已抢空")
 	}
-	mu.Lock()
-	defer mu.Unlock()
+	user := utils.GetUser(h.Context)
+	uuid, _ := utils.RandomUUID()
+	sec := time.Now().Unix()
+	lockValue := uuid + strconv.FormatInt(sec, 10) //由于value的全局唯一性，这里用uuid+时间戳，如需要更高精度应考虑雪花算法活其他方法生成
+	lock := redis.NewLock(h.Context, user.NickName, lockValue, 10)
+	ok := lock.TryLock()
+	if !ok {
+		return nil, errors.New("重复下单")
+	}
+	defer lock.UnLock(lockValue)
 	return h.createOrder(*req)
 }
 

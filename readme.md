@@ -51,8 +51,6 @@ nginx -c ~/nginx-1.18.0/conf/nginx.conf -p ~/nginx-1.18.0
 
 ### TODO
 
-- [ ] [优惠券秒杀](https://github.com/lhpqaq/xzdp-go/issues/4)
-
 - [ ] [UV统计](https://github.com/lhpqaq/xzdp-go/issues/9)
 
 - [ ] 优化代码

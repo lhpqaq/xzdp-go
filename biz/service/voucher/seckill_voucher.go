@@ -3,13 +3,14 @@ package voucher
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/cloudwego/hertz/pkg/app"
-	"strconv"
 	"sync"
 	"time"
 	"xzdp/biz/dal/mysql"
 	"xzdp/biz/dal/redis"
 	voucherModel "xzdp/biz/model/voucher"
+	"xzdp/biz/pkg/constants"
 	"xzdp/biz/utils"
 )
 
@@ -18,7 +19,9 @@ type SeckillVoucherService struct {
 	Context        context.Context
 }
 
-var mu sync.Mutex
+var (
+	wg sync.WaitGroup
+)
 
 func NewSeckillVoucherService(Context context.Context, RequestContext *app.RequestContext) *SeckillVoucherService {
 	return &SeckillVoucherService{RequestContext: RequestContext, Context: Context}
@@ -51,16 +54,40 @@ func (h *SeckillVoucherService) Run(req *int64) (resp *int64, err error) {
 		return nil, errors.New("已抢空")
 	}
 	user := utils.GetUser(h.Context)
-	uuid, _ := utils.RandomUUID()
-	sec := time.Now().Unix()
-	lockValue := uuid + strconv.FormatInt(sec, 10) //由于value的全局唯一性，这里用uuid+时间戳，如需要更高精度应考虑雪花算法活其他方法生成
-	lock := redis.NewLock(h.Context, user.NickName, lockValue, 10)
-	ok := lock.TryLock()
-	if !ok {
-		return nil, errors.New("重复下单")
+	//uuid, _ := utils.RandomUUID()
+	//sec := time.Now().Unix()
+	//lockValue := uuid + strconv.FormatInt(sec, 10) //由于value的全局唯一性，这里用uuid+时间戳，如需要更高精度应考虑雪花算法活其他方法生成
+	//lock := redis.NewLock(h.Context, user.NickName, lockValue, 10)
+	//ok := lock.TryLock()
+	mutex := redis.RedsyncClient.NewMutex(fmt.Sprintf("%s:%s", constants.VOUCHER_LOCK_KEY, user.NickName))
+	err = mutex.Lock()
+	if err != nil {
+		return nil, errors.New("获取分布式锁失败")
 	}
-	defer lock.UnLock(lockValue)
-	return h.createOrder(*req)
+	// 使用通道来接收 createOrder 的结果
+	resultCh := make(chan *int64, 1)
+	errCh := make(chan error, 1)
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		order, err := h.createOrder(*req)
+		if err != nil {
+			errCh <- err
+		} else {
+			resultCh <- order
+		}
+	}()
+	if ok, err := mutex.Unlock(); !ok || err != nil {
+		return nil, err
+	}
+	select {
+	case order := <-resultCh:
+		return order, nil
+	case err := <-errCh:
+		return nil, err
+	case <-h.Context.Done():
+		return nil, errors.New("请求超时")
+	}
 }
 
 func (h *SeckillVoucherService) createOrder(voucherId int64) (resp *int64, err error) {

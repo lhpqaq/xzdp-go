@@ -12,9 +12,14 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"net/http"
+	_ "net/http/pprof" // 导入 pprof HTTP handler
 )
 
 func main() {
+	go func() {
+		_ = http.ListenAndServe(":6060", nil)
+	}()
 	h := server.Default(server.WithHostPorts(conf.GetConf().Hertz.Address))
 	h.Use(interceptor.CheckToken)
 	h.Use(interceptor.Cors)

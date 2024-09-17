@@ -45,7 +45,8 @@ const (
 
 // voucher 相关
 const (
-	BEGIN_TIMESTAMP = 1725120000
-	ICRID_KEY       = "id:"
-	COUNT_BIT       = 32
+	BEGIN_TIMESTAMP  = 1725120000
+	ICRID_KEY        = "id:"
+	COUNT_BIT        = 32
+	VOUCHER_LOCK_KEY = "voucher:lock:"
 )

@@ -5,13 +5,18 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/go-redis/redis/v8"
+	"github.com/go-redsync/redsync/v4"
+	"github.com/go-redsync/redsync/v4/redis/goredis/v8"
 	"time"
 	"xzdp/biz/model/cache"
 	"xzdp/biz/pkg/constants"
 	"xzdp/conf"
 )
 
-var RedisClient *redis.Client
+var (
+	RedisClient   *redis.Client
+	RedsyncClient *redsync.Redsync
+)
 
 type ArgsFunc func(args ...interface{}) (interface{}, error)
 
@@ -23,6 +28,8 @@ func Init() {
 	if err := RedisClient.Ping(context.Background()).Err(); err != nil {
 		panic(err)
 	}
+	pool := goredis.NewPool(RedisClient)
+	RedsyncClient = redsync.New(pool)
 }
 
 func SetString(ctx context.Context, key string, value interface{}, duration time.Duration) error {

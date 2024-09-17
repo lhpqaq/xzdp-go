@@ -14,16 +14,16 @@ import (
 
 func CheckToken(ctx context.Context, c *app.RequestContext) {
 	hlog.CtxInfof(ctx, "check token interceptor:%+v", conf.GetEnv())
-	if conf.GetEnv() != "online" {
-		userdto := model.UserDTO{
-			ID:       2,
-			NickName: "法外狂徒张三",
-			Icon:     "https://img2.baidu.com/it/u=194756667,2850459164&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500",
-		}
-		ctx = utils.SaveUser(ctx, &userdto)
-		c.Next(ctx)
-		return
-	}
+	//if conf.GetEnv() != "online" {
+	//	userdto := model.UserDTO{
+	//		ID:       2,
+	//		NickName: "法外狂徒张三",
+	//		Icon:     "https://img2.baidu.com/it/u=194756667,2850459164&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500",
+	//	}
+	//	ctx = utils.SaveUser(ctx, &userdto)
+	//	c.Next(ctx)
+	//	return
+	//}
 	token := c.GetHeader("authorization")
 	if token == nil {
 		c.Next(ctx)

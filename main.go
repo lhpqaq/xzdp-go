@@ -9,11 +9,12 @@ import (
 	"xzdp/biz/middleware/interceptor"
 	"xzdp/conf"
 
+	"net/http"
+	_ "net/http/pprof" // 导入 pprof HTTP handler
+
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"net/http"
-	_ "net/http/pprof" // 导入 pprof HTTP handler
 )
 
 func main() {
@@ -62,6 +63,7 @@ func main() {
 
 	mysql.Init()
 	redis.Init()
+	h.Use(interceptor.UniqueVisitor)
 
 	register(h)
 	h.Spin()

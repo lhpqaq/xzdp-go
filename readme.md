@@ -5,9 +5,9 @@
 
 ## 介绍
 
-因为[黑马程序员redis教程实战篇](https://www.bilibili.com/video/BV1cr4y1671t?p=24  )使用的语言是`java`，不想浪费这个项目所以想用golang重构一下。项目没有采用`gin`框架而是字节的[Hertz](https://www.cloudwego.io/zh/docs/hertz/)框架，**欢迎各位大佬一个合作完成这个项目**  
+因为[黑马程序员redis教程实战篇](https://www.bilibili.com/video/BV1cr4y1671t?p=24  )使用的语言是`java`，不想浪费这个项目所以想用golang重构一下。项目没有采用`gin`框架而是字节的[Hertz](https://www.cloudwego.io/zh/docs/hertz/)框架。
 
-**没时间完整做的同学可以在[issue](#TODO)中挑选一个模块完成。**  
+当前已经初步完成项目的基本功能，大家可以查看[issues](https://github.com/lhpqaq/xzdp-go/issues)中的需求或自行创建需求为项目提交代码，包括但不限于优化代码，添加文档，添加单元测试等。    
 
 ### Start
 #### 前端
@@ -50,8 +50,6 @@ nginx -c ~/nginx-1.18.0/conf/nginx.conf -p ~/nginx-1.18.0
 不要修改`model/SERVICE_NAME/SERVICE_NAME.go`的内容，因为会被覆盖。  
 
 ### TODO
-
-- [ ] [UV统计](https://github.com/lhpqaq/xzdp-go/issues/9)
 
 - [ ] 优化代码
 

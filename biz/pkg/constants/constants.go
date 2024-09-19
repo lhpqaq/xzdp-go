@@ -17,6 +17,7 @@ const (
 	LOCK_KEY          = "lock:"
 	LOGIN_CODE_EXPIRE = 300
 	USER_SIGN_KEY     = "user:sign:"
+	HLL_UV_KEY        = "HyperLogLog:uv"
 )
 
 // cache 相关

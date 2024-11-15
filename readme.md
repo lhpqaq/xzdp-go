@@ -5,13 +5,13 @@
 
 ## 介绍
 
-因为[黑马程序员redis教程实战篇](https://www.bilibili.com/video/BV1cr4y1671t?p=24  )使用的语言是`java`，不想浪费这个项目所以想用golang重构一下。项目没有采用`gin`框架而是字节的[Hertz](https://www.cloudwego.io/zh/docs/hertz/)框架。
+因为[黑马程序员redis教程实战篇](https://www.bilibili.com/video/BV1cr4y1671t?p=24  )使用的语言是`java`，所以想用golang重构一下。项目使用字节的[Hertz](https://www.cloudwego.io/zh/docs/hertz/)框架。
 
 当前已经初步完成项目的基本功能，大家可以查看[issues](https://github.com/lhpqaq/xzdp-go/issues)中的需求或自行创建需求为项目提交代码，包括但不限于优化代码，添加文档，添加单元测试等。    
 
 ### Start
 #### 前端
-前端代码在`resources/nginx-1.18.0.zip`中，Windows系统可以双击`nginx.exe`运行，Mac 或 Linux安装nginx后参考以下命令执行：
+前端代码在`resources/nginx-1.18.0.zip`中，Windows系统可以双击`nginx.exe`运行，Mac 或 Linux 安装 nginx 后参考以下命令执行：
 ```shell
 nginx -c ~/nginx-1.18.0/conf/nginx.conf -p ~/nginx-1.18.0
 ```
@@ -60,7 +60,7 @@ nginx -c ~/nginx-1.18.0/conf/nginx.conf -p ~/nginx-1.18.0
 
 ### 如何合作
 
-欢迎以任何格式提交Issue和PR！或者➕我v：`lhpqaq1`. 有疑问也请联系我。   
+欢迎以任何格式提交 Issue 和 PR ！或者➕我v：`lhpqaq1`. 有疑问也请联系我。   
 
 点个🌟吧 😘   
 

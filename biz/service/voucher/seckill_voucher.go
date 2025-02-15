@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/cloudwego/hertz/pkg/app"
 	"sync"
 	"time"
 	"xzdp/biz/dal/mysql"
@@ -11,8 +12,6 @@ import (
 	voucherModel "xzdp/biz/model/voucher"
 	"xzdp/biz/pkg/constants"
 	"xzdp/biz/utils"
-
-	"github.com/cloudwego/hertz/pkg/app"
 )
 
 type SeckillVoucherService struct {
@@ -39,7 +38,6 @@ func (h *SeckillVoucherService) Run(req *int64) (resp *int64, err error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(voucher)
 	now := time.Now()
 	//1.判断是否开始&&结束
 	layout := "2006-01-02T15:04:05+08:00"
@@ -56,7 +54,6 @@ func (h *SeckillVoucherService) Run(req *int64) (resp *int64, err error) {
 		return nil, errors.New("已抢空")
 	}
 	user := utils.GetUser(h.Context)
-	fmt.Println(user)
 	//uuid, _ := utils.RandomUUID()
 	//sec := time.Now().Unix()
 	//lockValue := uuid + strconv.FormatInt(sec, 10) //由于value的全局唯一性，这里用uuid+时间戳，如需要更高精度应考虑雪花算法活其他方法生成
@@ -115,8 +112,8 @@ func (h *SeckillVoucherService) createOrder(voucherId int64) (resp *int64, err e
 		VoucherId:  voucherId,
 		OrderId:    orderId,
 		PayTime:    time.Now().Format("2006-01-02T15:04:05+08:00"),
-		UseTime:    time.Now().Format("2006-01-02T15:04:05+08:00"),
-		RefundTime: time.Now().Format("2006-01-02T15:04:05+08:00"),
+		UseTime:    "0000-00-00 00:00:00",
+		RefundTime: "0000-00-00 00:00:00",
 	}
 	err = mysql.CreateVoucherOrder(h.Context, voucherOrder)
 	if err != nil {

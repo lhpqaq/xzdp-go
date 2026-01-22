@@ -53,6 +53,13 @@ func (h *GetFollowBlogService) Run(req *blog.FollowBlogReq) (resp *blog.FollowBl
 	}
 	// 取最小分数的记录数
 	var offset int64 = 0
+	if len(zSet) == 0 {
+		return &blog.FollowBlogRresp{
+			List:    []*blog.Blog{},
+			MinTime: "0",
+			Offset:  0,
+		}, nil
+	}
 	minScore := zSet[len(zSet)-1].Score
 	for _, element := range zSet {
 		if element.Score == minScore {

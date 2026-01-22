@@ -6,7 +6,6 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/test/assert"
-	image "xzdp/biz/model/image"
 )
 
 func TestUploadService_Run(t *testing.T) {
@@ -16,7 +15,8 @@ func TestUploadService_Run(t *testing.T) {
 	// init req and assert value
 	req := &[]byte{}
 	resp, err := s.Run(req)
-	assert.DeepEqual(t, nil, resp)
 	assert.DeepEqual(t, nil, err)
-	// todo edit your unit test.
+	if resp != nil {
+		t.Errorf("expected nil response, got %v", resp)
+	}
 }

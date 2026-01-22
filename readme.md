@@ -5,6 +5,8 @@
 
 ## 介绍
 
+> 当前代码经过 AI 大幅重构，如果出现问题，请切换至[human](https://github.com/lhpqaq/xzdp-go/tree/human)分支，也欢迎您提交代码修复bug☺️  
+
 因为[黑马程序员redis教程实战篇](https://www.bilibili.com/video/BV1cr4y1671t?p=24  )使用的语言是`java`，所以想用golang重构一下。项目使用字节的[Hertz](https://www.cloudwego.io/zh/docs/hertz/)框架。
 
 当前已经初步完成项目的基本功能，大家可以查看[issues](https://github.com/lhpqaq/xzdp-go/issues)中的需求或自行创建需求为项目提交代码，包括但不限于优化代码，添加文档，添加单元测试等。    

@@ -32,10 +32,10 @@ func TestVoucherListService_Run(t *testing.T) {
 	ctx := context.Background()
 	c := app.NewContext(1)
 	s := NewVoucherListService(ctx, c)
-	
+
 	// init req and assert value
 	resp, err := s.Run(1)
-	
+
 	if err != nil {
 		t.Log(err)
 	} else {

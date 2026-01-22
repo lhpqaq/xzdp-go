@@ -14,7 +14,7 @@ import (
 func TestUserSignCountService_Run(t *testing.T) {
 	ctx := context.Background()
 	c := app.NewContext(1)
-	
+
 	// Inject User
 	u := &user.UserDTO{ID: 1}
 	ctx = utils.SaveUser(ctx, u)

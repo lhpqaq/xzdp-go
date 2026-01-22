@@ -43,7 +43,7 @@ func TestDeleteBlogService_Run(t *testing.T) {
 	str := "1"
 	req := &str
 	resp, err := s.Run(req)
-	
+
 	// Just ensure no panic. Error is fine.
 	if err != nil {
 		t.Log(err)

@@ -28,7 +28,7 @@ func TestGetLikesService_Run(t *testing.T) {
 		SkipInitializeWithVersion: true,
 	}), &gorm.Config{})
 	mysqlDal.DB = gormDB
-	
+
 	mock.ExpectQuery(".*").WillReturnRows(sqlmock.NewRows([]string{"id"}))
 
 	ctx := context.Background()
@@ -38,7 +38,7 @@ func TestGetLikesService_Run(t *testing.T) {
 	str := "1"
 	req := &str
 	resp, err := s.Run(req)
-	
+
 	if err != nil {
 		t.Log(err)
 	} else {

@@ -14,9 +14,9 @@ import (
 	redsyncgoredis "github.com/go-redsync/redsync/v4/redis/goredis/v8"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	
-	"xzdp/biz/dal/redis"
+
 	mysqlDal "xzdp/biz/dal/mysql"
+	"xzdp/biz/dal/redis"
 )
 
 func TestShopInfoService_Run(t *testing.T) {
@@ -31,14 +31,14 @@ func TestShopInfoService_Run(t *testing.T) {
 	redis.RedisClient = rdb
 	pool := redsyncgoredis.NewPool(rdb)
 	redis.RedsyncClient = redsync.New(pool)
-	
+
 	// Mock MySQL
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
-	
+
 	gormDB, err := gorm.Open(mysql.New(mysql.Config{
 		Conn:                      db,
 		SkipInitializeWithVersion: true,
@@ -59,11 +59,11 @@ func TestShopInfoService_Run(t *testing.T) {
 		WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(1, "Test Shop"))
 
 	resp, err := s.Run(shopId)
-	
+
 	// Wait a bit for async cache set (goroutine in GetStringLogical)
 	// This helps avoid race condition if test exits before goroutine uses mocked redis
 	// But in unit test with mocks, we just want to ensure main logic passes.
-	
+
 	assert.DeepEqual(t, nil, err)
 	assert.NotEqual(t, nil, resp)
 }

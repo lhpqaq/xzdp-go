@@ -39,7 +39,7 @@ func TestShopOfTypeService_Run(t *testing.T) {
 	// init req and assert value
 	req := &shop.ShopOfTypeReq{}
 	resp, err := s.Run(req)
-	
+
 	if err != nil {
 		t.Log(err)
 	} else {

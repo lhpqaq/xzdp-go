@@ -14,7 +14,7 @@ import (
 func TestGetFollowBlogService_Run(t *testing.T) {
 	ctx := context.Background()
 	c := app.NewContext(1)
-	
+
 	// Inject User
 	u := &user.UserDTO{ID: 1}
 	ctx = utils.SaveUser(ctx, u)
@@ -23,7 +23,7 @@ func TestGetFollowBlogService_Run(t *testing.T) {
 	// init req and assert value
 	req := &blog.FollowBlogReq{}
 	resp, err := s.Run(req)
-	
+
 	// Ensure no panic
 	if err != nil {
 		t.Log(err)

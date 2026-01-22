@@ -13,19 +13,19 @@ import (
 func TestUserMeService_Run(t *testing.T) {
 	ctx := context.Background()
 	c := app.NewContext(1)
-	
+
 	// Setup user in context
 	expectedUser := &user.UserDTO{
-		ID: 123,
+		ID:       123,
 		NickName: "TestUser",
 	}
 	ctx = utils.SaveUser(ctx, expectedUser)
 
 	s := NewUserMeService(ctx, c)
-	
+
 	req := &user.Empty{}
 	resp, err := s.Run(req)
-	
+
 	assert.DeepEqual(t, nil, err)
 	assert.DeepEqual(t, expectedUser, resp)
 }

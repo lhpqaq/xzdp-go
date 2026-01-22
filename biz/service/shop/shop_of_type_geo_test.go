@@ -39,7 +39,7 @@ func TestShopOfTypeGeoService_Run(t *testing.T) {
 	// init req and assert value
 	req := &shop.ShopOfTypeGeoReq{}
 	resp, err := s.Run(req)
-	
+
 	if err != nil {
 		t.Log(err)
 	} else {

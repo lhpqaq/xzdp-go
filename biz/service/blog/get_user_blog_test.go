@@ -38,7 +38,7 @@ func TestGetUserBlogService_Run(t *testing.T) {
 	// init req and assert value
 	req := &blog.BlogReq{}
 	resp, err := s.Run(req, 1)
-	
+
 	if err != nil {
 		t.Log(err)
 	} else {

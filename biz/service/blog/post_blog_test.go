@@ -22,7 +22,7 @@ import (
 func TestPostBlogService_Run(t *testing.T) {
 	ctx := context.Background()
 	c := app.NewContext(1)
-	
+
 	// Inject User
 	u := &user.UserDTO{ID: 1}
 	ctx = utils.SaveUser(ctx, u)
@@ -46,7 +46,7 @@ func TestPostBlogService_Run(t *testing.T) {
 	s := NewPostBlogService(ctx, c)
 	req := &blog.Blog{}
 	resp, err := s.Run(req)
-	
+
 	if err != nil {
 		t.Log("Warning: PostBlog returned error:", err)
 	}

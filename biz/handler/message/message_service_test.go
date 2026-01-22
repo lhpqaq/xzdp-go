@@ -54,7 +54,7 @@ func TestSse(t *testing.T) {
 		defer cancel()
 		Sse(timeoutCtx, c)
 	})
-	
+
 	w := ut.PerformRequest(h.Engine, "GET", "/message/sse", &ut.Body{Body: bytes.NewBufferString(""), Len: 1},
 		ut.Header{})
 	resp := w.Result()

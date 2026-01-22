@@ -40,8 +40,6 @@ func TestSeckillVoucherService_Run(t *testing.T) {
 
 	redis.RedsyncClient = redsync.New(pool)
 
-
-
 	// Mock MySQL
 
 	db, _, err := sqlmock.New()
@@ -56,10 +54,9 @@ func TestSeckillVoucherService_Run(t *testing.T) {
 
 	gormDB, err := gorm.Open(mysql.New(mysql.Config{
 
-		Conn:                      db,
+		Conn: db,
 
 		SkipInitializeWithVersion: true,
-
 	}), &gorm.Config{})
 
 	if err != nil {
@@ -70,31 +67,21 @@ func TestSeckillVoucherService_Run(t *testing.T) {
 
 	mysqlDal.DB = gormDB
 
-
-
 	ctx := context.Background()
 
 	c := app.NewContext(1)
 
 	s := NewSeckillVoucherService(ctx, c)
 
-	
-
 	// init req
 
 	id := int64(1)
-
-	
 
 	// Expect DB calls if cache miss? Or logic flow.
 
 	// Just ensure no panic for now.
 
-	
-
 	resp, err := s.Run(&id)
-
-	
 
 	if err != nil {
 

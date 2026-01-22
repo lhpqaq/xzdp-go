@@ -45,7 +45,7 @@ func TestHyperLogLog(t *testing.T) {
 		log.Fatalf("Failed to get HyperLogLog count: %v", err)
 	}
 	log.Printf("HyperLogLog count: %d", count)
-	// Miniredis PFCount implementation might differ or be exact, 
+	// Miniredis PFCount implementation might differ or be exact,
 	// just ensure it runs without panic and returns logical result.
 	assert.True(t, count > 0)
 }

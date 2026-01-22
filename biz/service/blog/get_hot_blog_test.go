@@ -39,10 +39,10 @@ func TestGetHotBlogService_Run(t *testing.T) {
 	ctx := context.Background()
 	c := app.NewContext(1)
 	s := NewGetHotBlogService(ctx, c)
-	
+
 	req := &blog.BlogReq{}
 	resp, err := s.Run(req)
-	
+
 	if err != nil {
 		t.Log("Warning: Run returned error:", err)
 	}

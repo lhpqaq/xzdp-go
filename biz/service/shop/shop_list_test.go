@@ -39,7 +39,7 @@ func TestShopListService_Run(t *testing.T) {
 	// init req and assert value
 	req := &shop.Empty{}
 	resp, err := s.Run(req)
-	
+
 	if err != nil {
 		t.Log(err)
 	} else {

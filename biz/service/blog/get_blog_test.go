@@ -38,7 +38,7 @@ func TestGetBlogService_Run(t *testing.T) {
 
 	ctx := context.Background()
 	c := app.NewContext(1)
-	
+
 	// Inject User
 	u := &user.UserDTO{ID: 1}
 	ctx = utils.SaveUser(ctx, u)
@@ -48,7 +48,7 @@ func TestGetBlogService_Run(t *testing.T) {
 	str := "1"
 	req := &str
 	resp, err := s.Run(req)
-	
+
 	if err != nil {
 		t.Log(err)
 	} else {

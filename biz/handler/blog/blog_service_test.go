@@ -35,7 +35,7 @@ func setup() {
 	mysqlDal.DB = gormDB
 
 	// Generic Mocks
-	mock.ExpectQuery(".*").WillReturnRows(sqlmock.NewRows([]string{"id"})) 
+	mock.ExpectQuery(".*").WillReturnRows(sqlmock.NewRows([]string{"id"}))
 	mock.ExpectExec(".*").WillReturnResult(sqlmock.NewResult(1, 1))
 }
 

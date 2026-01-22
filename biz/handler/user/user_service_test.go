@@ -27,13 +27,13 @@ func setup() {
 	// Mock MySQL
 	db, mock, _ := sqlmock.New()
 	// defer db.Close()
-	
+
 	gormDB, _ := gorm.Open(mysql.New(mysql.Config{
 		Conn:                      db,
 		SkipInitializeWithVersion: true,
 	}), &gorm.Config{})
 	mysqlDal.DB = gormDB
-	
+
 	// Mock common queries if needed to avoid panic
 	mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `tb_user`")).WillReturnRows(sqlmock.NewRows([]string{"id"}))
 }
@@ -48,7 +48,7 @@ func TestUserMethod(t *testing.T) {
 	// Should be 200 OK because we mocked DB/Redis (or at least stopped panic)
 	// But UserMe requires login, so it might return error or empty
 	assert.DeepEqual(t, 200, resp.StatusCode())
-	// assert.DeepEqual(t, "", string(resp.Body())) 
+	// assert.DeepEqual(t, "", string(resp.Body()))
 }
 
 func TestSendCode(t *testing.T) {

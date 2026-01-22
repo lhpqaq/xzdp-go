@@ -13,9 +13,11 @@ func TestLikeCommentService_Run(t *testing.T) {
 	c := app.NewContext(1)
 	s := NewLikeCommentService(ctx, c)
 	// init req and assert value
-	req := &string{}
+	str := "1"
+	req := &str
 	resp, err := s.Run(req)
-	assert.DeepEqual(t, nil, resp)
 	assert.DeepEqual(t, nil, err)
-	// todo edit your unit test.
+	if resp != nil {
+		t.Errorf("expected nil response, got %v", resp)
+	}
 }

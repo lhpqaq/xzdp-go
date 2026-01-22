@@ -16,7 +16,8 @@ func TestPostCommentService_Run(t *testing.T) {
 	// init req and assert value
 	req := &blog_comment.BlogComment{}
 	resp, err := s.Run(req)
-	assert.DeepEqual(t, nil, resp)
 	assert.DeepEqual(t, nil, err)
-	// todo edit your unit test.
+	if resp != nil {
+		t.Errorf("expected nil response, got %v", resp)
+	}
 }

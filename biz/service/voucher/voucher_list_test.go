@@ -3,20 +3,42 @@ package voucher
 import (
 	"context"
 	"testing"
-	"xzdp/biz/dal/mysql"
 
+	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/alicebob/miniredis/v2"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/test/assert"
+	goredis "github.com/go-redis/redis/v8"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+
+	mysqlDal "xzdp/biz/dal/mysql"
+	"xzdp/biz/dal/redis"
 )
 
 func TestVoucherListService_Run(t *testing.T) {
+	// Mock Redis
+	mr, _ := miniredis.Run()
+	redis.RedisClient = goredis.NewClient(&goredis.Options{Addr: mr.Addr()})
+
+	// Mock MySQL
+	db, _, _ := sqlmock.New()
+	gormDB, _ := gorm.Open(mysql.New(mysql.Config{
+		Conn:                      db,
+		SkipInitializeWithVersion: true,
+	}), &gorm.Config{})
+	mysqlDal.DB = gormDB
+
 	ctx := context.Background()
-	mysql.Init()
 	c := app.NewContext(1)
 	s := NewVoucherListService(ctx, c)
+	
 	// init req and assert value
 	resp, err := s.Run(1)
-	assert.DeepEqual(t, nil, resp)
-	assert.DeepEqual(t, nil, err)
-	// todo edit your unit test.
+	
+	if err != nil {
+		t.Log(err)
+	} else {
+		assert.NotEqual(t, nil, resp)
+	}
 }

@@ -2,31 +2,76 @@ package follow
 
 import (
 	"bytes"
+	"context"
 	"testing"
 
+	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/alicebob/miniredis/v2"
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/common/test/assert"
 	"github.com/cloudwego/hertz/pkg/common/ut"
+	goredis "github.com/go-redis/redis/v8"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+
+	mysqlDal "xzdp/biz/dal/mysql"
+	"xzdp/biz/dal/redis"
+	"xzdp/biz/model/user"
+	"xzdp/biz/utils"
 )
 
+func setup() {
+	mr, _ := miniredis.Run()
+	redis.RedisClient = goredis.NewClient(&goredis.Options{Addr: mr.Addr()})
+
+	db, mock, _ := sqlmock.New()
+	gormDB, _ := gorm.Open(mysql.New(mysql.Config{
+		Conn:                      db,
+		SkipInitializeWithVersion: true,
+	}), &gorm.Config{})
+	mysqlDal.DB = gormDB
+
+	mock.ExpectQuery(".*").WillReturnRows(sqlmock.NewRows([]string{"id"}))
+}
+
+func withUser() app.HandlerFunc {
+	return func(ctx context.Context, c *app.RequestContext) {
+		u := &user.UserDTO{ID: 1}
+		ctx = utils.SaveUser(ctx, u)
+		c.Next(ctx)
+	}
+}
+
 func TestFollow(t *testing.T) {
+	setup()
 	h := server.Default()
-	h.GET("/follow", Follow)
-	w := ut.PerformRequest(h.Engine, "GET", "/follow", &ut.Body{Body: bytes.NewBufferString(""), Len: 1},
+	h.Use(withUser())
+	h.PUT("/follow/:id/:isFollow", Follow)
+	w := ut.PerformRequest(h.Engine, "PUT", "/follow/1/true", &ut.Body{Body: bytes.NewBufferString(""), Len: 1},
 		ut.Header{})
 	resp := w.Result()
-	assert.DeepEqual(t, 201, resp.StatusCode())
-	assert.DeepEqual(t, "", string(resp.Body()))
-	// todo edit your unit test.
+	assert.DeepEqual(t, 200, resp.StatusCode())
 }
 
 func TestIsFollowed(t *testing.T) {
+	setup()
 	h := server.Default()
-	h.GET("/follow/isFollowed", IsFollowed)
-	w := ut.PerformRequest(h.Engine, "GET", "/follow/isFollowed", &ut.Body{Body: bytes.NewBufferString(""), Len: 1},
+	h.Use(withUser())
+	h.GET("/follow/or/not/:id", IsFollowed)
+	w := ut.PerformRequest(h.Engine, "GET", "/follow/or/not/1", &ut.Body{Body: bytes.NewBufferString(""), Len: 1},
 		ut.Header{})
 	resp := w.Result()
-	assert.DeepEqual(t, 201, resp.StatusCode())
-	assert.DeepEqual(t, "", string(resp.Body()))
-	// todo edit your unit test.
+	assert.DeepEqual(t, 200, resp.StatusCode())
+}
+
+func TestCommonFollow(t *testing.T) {
+	setup()
+	h := server.Default()
+	h.Use(withUser())
+	h.GET("/follow/common/:id", CommonFollow)
+	w := ut.PerformRequest(h.Engine, "GET", "/follow/common/1", &ut.Body{Body: bytes.NewBufferString(""), Len: 1},
+		ut.Header{})
+	resp := w.Result()
+	assert.DeepEqual(t, 200, resp.StatusCode())
 }

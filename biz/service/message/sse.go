@@ -3,16 +3,17 @@ package message
 import (
 	"context"
 	"errors"
+	"strconv"
+	"time"
+
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	redis2 "github.com/go-redis/redis/v8"
-	"strconv"
 	"xzdp/biz/dal/redis"
+	"xzdp/biz/model/message"
 	"xzdp/biz/pkg/cache"
 	"xzdp/biz/pkg/constants"
 	"xzdp/biz/utils"
-
-	"github.com/cloudwego/hertz/pkg/app"
-	message "xzdp/biz/model/message"
 )
 
 type SseService struct {
@@ -58,7 +59,7 @@ func (h *SseService) consumeMq(id string) ([]redis2.XStream, error) {
 	consumer := constants.STREAM_CONSUMER + idStr
 	redis.CreateConsumerGroup(h.Context, key)
 	// 读redis消息队列
-	xSet, err := redis.ConsumeMq(h.Context, key, consumer, 20, 1, id)
+	xSet, err := redis.ConsumeMq(h.Context, key, consumer, 100*time.Millisecond, 1, id)
 	return xSet, err
 }
 

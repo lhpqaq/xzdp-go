@@ -28,10 +28,10 @@ func GetById(ctx context.Context, id int64) (*model.User, error) {
 	return &user, nil
 }
 
-func GetUserInfoById(ctx context.Context, id int64) (*model.UserInfo, error) {
+func GetUserInfoById(ctx context.Context, db *gorm.DB, id int64) (*model.UserInfo, error) {
 
 	var user model.UserInfo
-	db := DB.Model(&model.UserInfo{})
+	db = db.Model(&model.UserInfo{})
 
 	// Perform the query
 	if err := db.First(&user, "user_id = ?", id).Error; err != nil {

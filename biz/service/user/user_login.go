@@ -13,16 +13,35 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
+	red "github.com/go-redis/redis/v8"
 	"github.com/jinzhu/copier"
+	"gorm.io/gorm"
 )
 
 type UserLoginService struct {
 	RequestContext *app.RequestContext
 	Context        context.Context
+	DB             *gorm.DB
+	Redis          *red.Client
 }
 
-func NewUserLoginService(Context context.Context, RequestContext *app.RequestContext) *UserLoginService {
-	return &UserLoginService{RequestContext: RequestContext, Context: Context}
+func NewUserLoginService(ctx context.Context, requestContext *app.RequestContext) *UserLoginService {
+	return &UserLoginService{
+		RequestContext: requestContext,
+		Context:        ctx,
+		DB:             mysql.DB,
+		Redis:          redis.RedisClient,
+	}
+}
+
+// NewUserLoginServiceWithDB is used for testing or when custom DB/Redis are needed
+func NewUserLoginServiceWithDB(ctx context.Context, requestContext *app.RequestContext, db *gorm.DB, rds *red.Client) *UserLoginService {
+	return &UserLoginService{
+		RequestContext: requestContext,
+		Context:        ctx,
+		DB:             db,
+		Redis:          rds,
+	}
 }
 
 func (h *UserLoginService) Run(req *model.UserLoginFrom) (resp *model.Result, err error) {
@@ -30,14 +49,17 @@ func (h *UserLoginService) Run(req *model.UserLoginFrom) (resp *model.Result, er
 		hlog.CtxInfof(h.Context, "req = %+v", req)
 		hlog.CtxInfof(h.Context, "resp = %+v", resp)
 	}()
-	// todo edit your code
+
 	phone := req.Phone
 	code := req.Code
 	if phone == "" || code == "" {
 		return nil, errors.New("phone or code can't be empty")
 	}
-	redisCode, err := redis.RedisClient.Get(h.Context, constants.LOGIN_CODE_KEY+phone).Result()
+	redisCode, err := h.Redis.Get(h.Context, constants.LOGIN_CODE_KEY+phone).Result()
 	if err != nil {
+		if errors.Is(err, red.Nil) {
+			return nil, fmt.Errorf("code expired or not found")
+		}
 		hlog.CtxErrorf(h.Context, "err = %s", err.Error())
 		return nil, err
 	}
@@ -51,19 +73,23 @@ func (h *UserLoginService) Run(req *model.UserLoginFrom) (resp *model.Result, er
 	}
 
 	var user model.User
-	result := mysql.DB.Debug().First(&user, "phone = ?", phone)
+	result := h.DB.Debug().First(&user, "phone = ?", phone)
 	hlog.CtxInfof(h.Context, "result = %+v", result)
 
 	if result.Error != nil {
-		user, err = h.createNewUserWithPhone(phone)
-		if err != nil {
-			return nil, err
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			user, err = h.createNewUserWithPhone(phone)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			return nil, result.Error
 		}
 	}
 
 	var userdto model.UserDTO
 	copier.Copy(&userdto, &user)
-	if err = redis.RedisClient.HMSet(h.Context, constants.LOGIN_USER_KEY+token, map[string]interface{}{
+	if err = h.Redis.HMSet(h.Context, constants.LOGIN_USER_KEY+token, map[string]interface{}{
 		"id":        userdto.ID,
 		"nick_name": userdto.NickName,
 		"icon":      userdto.Icon,
@@ -82,7 +108,7 @@ func (h *UserLoginService) createNewUserWithPhone(phone string) (model.User, err
 		NickName: "user_" + utils.RandomString(10),
 	}
 
-	result := mysql.DB.Debug().Create(&user)
+	result := h.DB.Debug().Create(&user)
 	hlog.CtxInfof(h.Context, "result = %+v", result)
 	return user, result.Error
 }

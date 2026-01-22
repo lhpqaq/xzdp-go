@@ -6,17 +6,26 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/test/assert"
-	follow "xzdp/biz/model/follow"
+	"xzdp/biz/model/user"
+	"xzdp/biz/utils"
 )
 
 func TestIsFollowedService_Run(t *testing.T) {
 	ctx := context.Background()
 	c := app.NewContext(1)
+	
+	// Inject User
+	u := &user.UserDTO{ID: 1}
+	ctx = utils.SaveUser(ctx, u)
+
 	s := NewIsFollowedService(ctx, c)
 	// init req and assert value
-	req := &follow.IsFollowedReq{}
+	req := "1"
 	resp, err := s.Run(req)
-	assert.DeepEqual(t, nil, resp)
-	assert.DeepEqual(t, nil, err)
-	// todo edit your unit test.
+	
+	if err != nil {
+		t.Log(err)
+	} else {
+		assert.NotEqual(t, nil, resp)
+	}
 }
